@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profiles</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <h1>Doctor Profiles</h1>
+
+    <ul class="doctor-list-dash">
+        <% doctors.forEach(doctor => { %>
+            <li class="doctor-profile-dash">
+                <img src="<%= doctor.photo %>" alt="<%= doctor.name %>" class="doctor-image-dash">
+                <h3><%= doctor.name %></h3>
+                <p><strong>Qualification:</strong> <%= doctor.qualification %></p>
+                <p><strong>Expertise:</strong> <%= doctor.expertise %></p>
+                <a href="/dashboard/doctor/edit/<%= doctor.id %>">Edit</a>
+                <form action="/dashboard/doctor/delete/<%= doctor.id %>" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+
+    <a href="/dashboard/doctor/add">Add Another Doctor</a> <!-- Link to the add doctor form -->
+</body>
+</html>

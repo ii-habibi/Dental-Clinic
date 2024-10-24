@@ -6,6 +6,19 @@ const path = require('path');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 
+
+
+
+const appointmentRoutes = require('./routes/appointments');
+
+
+
+
+
+
+
+
+
 // Initialize app
 const app = express();
 
@@ -28,6 +41,7 @@ app.use(flash());
 // Routes
 app.use('/dashboard', adminRoutes);//admin
 app.use('/', userRoutes); //user
+app.use('/appointments', appointmentRoutes);
 
 // Handle 404 errors
 app.use((req, res) => {
@@ -42,5 +56,5 @@ app.get('/', (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on https://localhost:${PORT}/`);
+    console.log(`Server is running on http://localhost:${PORT}/`);
 });

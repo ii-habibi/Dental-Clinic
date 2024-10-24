@@ -55,5 +55,41 @@
     </div>
 </div>
 
+
+
+<!-- Appointment section  -->
+
+
+<h1>Book an Appointment</h1>
+<form action="/appointments/book" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" name="patient_name" id="name" required>
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" name="patient_email" id="email" required>
+    <br>
+    <label for="phone">Phone Number:</label>
+    <input type="tel" name="patient_phone" id="phone" required>
+    <br>
+    <label for="doctor">Select Doctor:</label>
+    <select name="doctor_id" id="doctor" required>
+        <% doctors.forEach(doctor => { %>
+            <option value="<%= doctor.id %>"><%= doctor.name %></option>
+        <% }) %>
+    </select>
+    <br>
+    <label for="date">Date:</label>
+    <input type="date" name="appointment_date" id="date" required>
+    <br>
+    <label for="time">Time:</label>
+    <input type="time" name="appointment_time" id="time" required>
+    <br>
+    <label for="treatment">Treatment Type:</label>
+    <input type="text" name="treatment_type" id="treatment" required>
+    <br>
+    <button type="submit">Book Appointment</button>
+</form>
+
+
 </body>
 </html>

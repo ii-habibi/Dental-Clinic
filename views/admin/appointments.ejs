@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointments</title>
+</head>
+<body>
+    <h1>All Appointments</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Appointment ID</th>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Doctor ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Treatment Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% appointments.forEach(appointment => { %>
+                <tr>
+                    <td><%= appointment.appointment_id %></td>
+                    <td><%= appointment.patient_name %></td>
+                    <td><%= appointment.patient_email %></td>
+                    <td><%= appointment.patient_phone %></td>
+                    <td><%= appointment.doctor_id %></td>
+                    <td><%= appointment.appointment_date %></td>
+                    <td><%= appointment.appointment_time %></td>
+                    <td><%= appointment.treatment_type %></td>
+                    <td><%= appointment.status %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    
+</body>
+</html>

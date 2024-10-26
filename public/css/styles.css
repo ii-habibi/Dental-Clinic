@@ -1,5 +1,10 @@
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, sans-serif;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
@@ -21,7 +26,7 @@ h1 {
 
 
 /* Doctor  */
-
+/* 
 .doctor-profiles {
     text-align: center;
     padding: 20px;
@@ -45,7 +50,7 @@ h1 {
     width: 100%;
     height: auto;
     border-radius: 50%;
-}
+} */
 
 
 /* dashboard doctor  */

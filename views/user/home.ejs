@@ -3,125 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/home_styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Home - Services</title>
 </head>
 <body>
-    <h1>Welcome to Our Dental Clinic</h1>
-    <a href="https://web.whatsapp.com/send?phone=923496563330" target="_blank" class="whatsapp-button">
-        <button type="button">Call Now</button>
-    </a>
-    
-    <h2>Our Services</h2>
-    
-    <ul>
-        <% services.forEach(service => { %>
-            <li>
-                <h3><%= service.name %></h3>
-                <p><%= service.description %></p>
-                <p>Price: PKR<%= service.price %></p>
-            </li>
-        <% }); %>
-    </ul>
 
-
-    <h1>Latest Blogs</h1>
-    <div>
-        <% if (blogs.length === 0) { %>
-            <p>No blogs available.</p>
-        <% } else { %>
-            <% blogs.forEach(blog => { %>
-                <div>
-                    <h2><%= blog.title %></h2>
-                    <p><strong>By <%= blog.author %></strong> | <%= blog.published_date %></p>
-                    <p><%= blog.content %></p>
+    <header>
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="logo">
+                    <a href="#home">Dental Clinic</a>
                 </div>
-            <% }); %>
-        <% } %>
-    </div>
-
-    <!-- Doctor Profiles Section -->
-<div class="doctor-profiles">
-    <h2>Our Doctors</h2>
-    <div class="doctor-list">
-        <% doctors.forEach(doctor => { %>
-            <div class="doctor-card">
-                <img src="<%= doctor.photo %>" alt="<%= doctor.name %>" class="doctor-photo">
-                <h3><%= doctor.name %></h3>
-                <p><strong>Qualification:</strong> <%= doctor.qualification %></p>
-                <p><strong>Expertise:</strong> <%= doctor.expertise %></p>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="#blog-section" class="nav-link">Blogs</a></li>
+                    <li class="nav-item"><a href="#services-section" class="nav-link">Services</a></li>
+                    <li class="nav-item"><a href="#doctor-profiles" class="nav-link">Doctors</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <a href="tel:+1234567890" class="btn btn-call">
+                        <i class="fas fa-phone"></i> Call
+                    </a>
+                    <a href="appointment-section"  class="btn btn-book">Book Appointment</a>
+                </div>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
             </div>
-        <% }) %>
+        </nav>
+    </header>
+
+
+
+
+
+
+
+
+    <div class="container">
+        <h1 class="tooth-icon">Welcome to Our Dental Clinic</h1>
+        
+        <section class="services-section" id="services-section">
+            <h2 class="tooth-icon">Our Services</h2>
+            <ul class="services-list">
+                <% services.forEach(service => { %>
+                    <li class="service-item">
+                        <h3><%= service.name %></h3>
+                        <p><%= service.description %></p>
+                        <p class="service-price">Price: PKR <%= service.price %></p>
+                    </li>
+                <% }); %>
+            </ul>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section class="blog-section" id="blog-section">
+            <h2 class="tooth-icon">Latest Blogs</h2>
+            <div class="blog-container">
+                <% if (blogs.length === 0) { %>
+                    <p>No blogs available.</p>
+                <% } else { %>
+                    <% blogs.forEach(blog => { %>
+                        <div class="blog-post">
+                            <h2><%= blog.title %></h2>
+                            <p class="blog-meta">
+                                <strong>By <%= blog.author %></strong> | 
+                                <%= new Date(blog.created_at).toLocaleDateString('en-US', {
+                                    month: 'short', day: 'numeric', year: 'numeric'
+                                }) %>
+                            </p>
+                            <p class="blog-description" data-full-text="<%= blog.content %>">
+                                <span class="truncated-text"></span>
+                                <span class="full-text" style="display:none;"></span>
+                            </p>
+                            <a href="#" class="see-more">See More</a>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+        </section>
+        
+        
+
+        <div class="section-divider"></div>
+
+        <section class="doctor-profiles" id="doctor-profiles">
+            <h2 class="tooth-icon">Our Doctors</h2>
+            <div class="doctor-list">
+                <% doctors.forEach(doctor => { %>
+                    <div class="doctor-card">
+                        <img src="<%= doctor.photo %>" alt="<%= doctor.name %>" class="doctor-photo">
+                        <h3><%= doctor.name %></h3>
+                        <p><strong>Qualification:</strong> <%= doctor.qualification %></p>
+                        <p><strong>Expertise:</strong> <%= doctor.expertise %></p>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+        
+        
+        
+        
+        <!-- Appointment section  -->
+        
+        <section class="appointment-section" id="appointment-section">
+            <h1 class="tooth-icon">Book an Appointment</h1>
+            <form id="appointmentForm" class="appointment-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" name="patient_name" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" name="patient_email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" name="patient_phone" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="doctor">Select Doctor:</label>
+                    <select name="doctor_id" id="doctor" required>
+                        <% doctors.forEach(doctor => { %>
+                            <option value="<%= doctor.id %>"><%= doctor.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" name="appointment_date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="time">Time:</label>
+                    <input type="time" name="appointment_time" id="time">
+                </div>
+                <div class="form-group">
+                    <label for="treatment">Treatment Type:</label>
+                    <input type="text" name="treatment_type" id="treatment" required>
+                </div>
+                <div class="form-group">
+                    <label for="visitType">Visit Type:</label>
+                    <select name="visit_type" id="visitType" required>
+                        <option value="first">First Visit</option>
+                        <option value="return">Return Patient</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Book Appointment</button>
+            </form>
+        </section>
+        
+        
+        
     </div>
-</div>
-
-
-
-<!-- Appointment section  -->
-
-
-<h1>Book an Appointment</h1>
-<form id="appointmentForm">
-    <label for="name">Name:</label>
-    <input type="text" name="patient_name" id="name" required>
-    <br>
-    <label for="email">Email:</label>
-    <input type="email" name="patient_email" id="email" required>
-    <br>
-    <label for="phone">Phone Number:</label>
-    <input type="tel" name="patient_phone" id="phone" required>
-    <br>
-    <label for="doctor">Select Doctor:</label>
-    <select name="doctor_id" id="doctor" required>
-        <% doctors.forEach(doctor => { %>
-            <option value="<%= doctor.id %>"><%= doctor.name %></option>
-        <% }) %>
-    </select>
-    <br>
-    <label for="date">Date:</label>
-    <input type="date" name="appointment_date" id="date" required>
-    <br>
-    <label for="time">Time:</label>
-    <input type="time" name="appointment_time" id="time">
-    <br>
-    <label for="treatment">Treatment Type:</label>
-    <input type="text" name="treatment_type" id="treatment" required>
-    <br>
-    <label for="visitType">Visit Type:</label>
-    <select name="visit_type" id="visitType" required>
-        <option value="first">First Visit</option>
-        <option value="return">Return Patient</option>
-    </select>
-    <br>
-    <button type="submit">Book Appointment</button>
-</form>
-
-
 <script>
-    document.getElementById('appointmentForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-    
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries()); // Convert form data to a plain object
-    
-        fetch('/dashboard/appointments/book', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data) // Send data as JSON
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Appointment booked successfully') {
-                alert('Appointment booked successfully!');
-                event.target.reset();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => console.error('Error booking appointment:', error));
+
+    $('#appointmentForm').on('submit', function(event) {
+    event.preventDefault();
+
+    const formData = $(this).serializeArray();
+    const data = {};
+    formData.forEach(item => {
+        data[item.name] = item.value;
     });
+
+    $.ajax({
+        url: '/dashboard/appointments/book',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data), 
+        success: function(response) {
+            if (response.message === 'Appointment booked successfully') {
+                alert('Appointment booked successfully!');
+                $('#appointmentForm')[0].reset();
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error booking appointment:', error);
+        }
+    });
+});
+
+
+
+$(document).ready(function() {
+    const $hamburger = $('.hamburger');
+    const $navMenu = $('.nav-menu');
+    const $navLinks = $('.nav-link');
+
+    $hamburger.on('click', function() {
+        $hamburger.toggleClass('active');
+        $navMenu.toggleClass('active');
+    });
+
+    $navLinks.on('click', function() {
+        $hamburger.removeClass('active');
+        $navMenu.removeClass('active');
+    });
+});
+
+
+
+
+$(document).ready(function() {
+    const characterLimit = 250; 
+
+    $('.blog-description').each(function() {
+        const $this = $(this);
+        const fullText = $this.data('full-text');
+        
+        if (fullText.length > characterLimit) {
+            const truncatedText = fullText.substring(0, characterLimit) + '...';
+            $this.find('.truncated-text').text(truncatedText);
+            $this.find('.full-text').text(fullText);
+        } else {
+           
+            $this.find('.truncated-text').text(fullText);
+            $this.find('.full-text').text('');
+            $this.siblings('.see-more').hide(); 
+        }
+    });
+
+    $('.see-more').on('click', function(e) {
+        e.preventDefault();
+        const $this = $(this);
+        const $blogDescription = $this.siblings('.blog-description');
+
+        
+        $blogDescription.find('.truncated-text').toggle();
+        $blogDescription.find('.full-text').toggle();
+
+        
+        if ($blogDescription.find('.full-text').is(':visible')) {
+            $this.text('See Less');
+        } else {
+            $this.text('See More');
+        }
+    });
+});
+
+
+
     </script>
     
 

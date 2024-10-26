@@ -6,7 +6,6 @@ const pool = require('../models/db'); // Adjust the path as necessary
 
 // Route to display services and blogs on the user side
 router.get('/', async (req, res) => {
-    console.log('User is accessing the home route'); // Debug log
     try {
         // Fetch services from the database
         const servicesResult = await pool.query('SELECT * FROM Services');

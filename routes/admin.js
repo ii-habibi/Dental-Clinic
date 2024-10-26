@@ -20,6 +20,9 @@ router.use('/blogs', blogsRoutes); // BLog route
 const doctorsRoute = require("./doctors")
 router.use("/doctor", doctorsRoute)
 
+// Appointments Route 
+const appointmentRoutes = require('./appointments');
+router.use('/appointments', appointmentRoutes);
 
 // Test route to check database connection
 router.get('/test-db', async (req, res) => {

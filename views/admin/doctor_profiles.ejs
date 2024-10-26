@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Profiles</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
-</head>
-<body>
-    <h1>Doctor Profiles</h1>
+< !DOCTYPE html >
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Doctor Profiles</title>
+                    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
+                    </head>
+                    <body>
+                        <a href="/dashboard">Dashboard</a> <!-- Link to Dashboard -->
+                        <h1>Doctor Profiles</h1>
 
-    <ul class="doctor-list-dash">
-        <% doctors.forEach(doctor => { %>
+                        <ul class="doctor-list-dash">
+                            <% doctors.forEach(doctor => { %>
             <li class="doctor-profile-dash">
                 <img src="<%= doctor.photo %>" alt="<%= doctor.name %>" class="doctor-image-dash">
                 <h3><%= doctor.name %></h3>
@@ -22,8 +23,8 @@
                 </form>
             </li>
         <% }) %>
-    </ul>
+                        </ul>
 
-    <a href="/dashboard/doctor/add">Add Another Doctor</a> <!-- Link to the add doctor form -->
-</body>
-</html>
+                        <a href="/dashboard/doctor/add">Add Another Doctor</a> <!-- Link to the add doctor form -->
+                    </body>
+                </html>

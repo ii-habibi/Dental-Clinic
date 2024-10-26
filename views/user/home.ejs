@@ -61,7 +61,7 @@
 
 
 <h1>Book an Appointment</h1>
-<form action="/appointments/book" method="POST">
+<form id="appointmentForm">
     <label for="name">Name:</label>
     <input type="text" name="patient_name" id="name" required>
     <br>
@@ -82,13 +82,48 @@
     <input type="date" name="appointment_date" id="date" required>
     <br>
     <label for="time">Time:</label>
-    <input type="time" name="appointment_time" id="time" required>
+    <input type="time" name="appointment_time" id="time">
     <br>
     <label for="treatment">Treatment Type:</label>
     <input type="text" name="treatment_type" id="treatment" required>
     <br>
+    <label for="visitType">Visit Type:</label>
+    <select name="visit_type" id="visitType" required>
+        <option value="first">First Visit</option>
+        <option value="return">Return Patient</option>
+    </select>
+    <br>
     <button type="submit">Book Appointment</button>
 </form>
+
+
+<script>
+    document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries()); // Convert form data to a plain object
+    
+        fetch('/dashboard/appointments/book', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data) // Send data as JSON
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Appointment booked successfully') {
+                alert('Appointment booked successfully!');
+                event.target.reset();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error booking appointment:', error));
+    });
+    </script>
+    
 
 
 </body>

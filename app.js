@@ -8,22 +8,12 @@ const userRoutes = require('./routes/user');
 
 
 
-
-const appointmentRoutes = require('./routes/appointments');
-
-
-
-
-
-
-
-
-
 // Initialize app
 const app = express();
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -41,7 +31,7 @@ app.use(flash());
 // Routes
 app.use('/dashboard', adminRoutes);//admin
 app.use('/', userRoutes); //user
-app.use('/appointments', appointmentRoutes);
+
 
 // Handle 404 errors
 app.use((req, res) => {

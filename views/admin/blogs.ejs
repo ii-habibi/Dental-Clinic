@@ -8,6 +8,7 @@
     <title>Manage Blogs</title>
 </head>
 <body>
+    <a href="/dashboard">Dashboard</a> <!-- Link to Dashboard -->
     <h1>Manage Blogs</h1>
     <a href="/dashboard/blogs/add">Add New Blog</a>
     <table>
@@ -43,8 +44,8 @@ $(document).ready(function() {
 
         if (confirm('Are you sure you want to delete this blog?')) {
             $.ajax({
-                url: '/dashboard/blogs/delete/' + blogId, // Specify the delete route
-                type: 'POST', // Use the POST method as your route is handling POST, not DELETE
+                url: '/dashboard/blogs/delete/' + blogId, 
+                type: 'POST', 
                 success: function(response) {
                     row.fadeOut(300, function() {
                         $(this).remove(); // Remove the row from the table after fading out

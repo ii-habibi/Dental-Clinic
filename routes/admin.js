@@ -6,7 +6,7 @@ const pool = require('../models/db');
 
 // Route to Dashboard
 router.get('/', (req, res) => {
-    res.render('admin_dashboard');
+    res.render('admin/admin_dashboard');
 });
 
 // Import Services routes

@@ -3,133 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pageTitle %></title>
+    <title><%= pageTitle %> - Dental Clinic Admin</title>
+    <link rel="stylesheet" href="/css/doctors.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+    <header class="admin-header">
+        <div class="container">
+            <h1 class="admin-title">Dental Clinic Admin</h1>
+            <nav class="admin-nav">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/dashboard/services" class="nav-link">Manage Services</a>
+                <a href="/dashboard/services/add" class="nav-link">Add New Service</a>
+            </nav>
+        </div>
+    </header>
 
-    <a href="/dashboard">Dashboard</a> <!-- Link to Dashboard -->
-    <h1><%= pageTitle %></h1>
+    <main class="container">
+        <h2><%= pageTitle %></h2>
 
-    <!-- Display the services table -->
-    <% if (view === 'list') { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="service-list">
-                <% services.forEach(service => { %>
-                    <tr id="service-<%= service.service_id %>">
-                        <td><%= service.name %></td>
-                        <td><%= service.description %></td>
-                        <td><%= service.price %></td>
-                        <td>
-                            <a href="/dashboard/services/edit/<%= service.service_id %>">Edit</a>
-                            <button class="delete-button" data-id="<%= service.service_id %>">Delete</button>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
-        <a href="/dashboard/services/add">Add New Service</a>
-    <% } %>
+        <% if (view === 'list') { %>
+            <a href="/dashboard/services/add" class="btn btn-primary">Add New Service</a>
+            <div class="table-responsive">
+                <table class="admin-table" id="service-list">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% services.forEach(service => { %>
+                            <tr id="service-<%= service.service_id %>">
+                                <td><%= service.name %></td>
+                                <td><%= service.description %></td>
+                                <td>$<%= service.price %></td>
+                                <td>
+                                    <a href="/dashboard/services/edit/<%= service.service_id %>" class="btn btn-edit">Edit</a>
+                                    <button class="btn btn-delete delete-button" data-id="<%= service.service_id %>">Delete</button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
 
-    <!-- Display the add service form -->
-    <% if (view === 'add') { %>
-        <form action="/dashboard/services" method="POST">
-            <label for="name">Service Name:</label>
-            <input type="text" id="name" name="name" required>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
-            <label for="price">Service Price:</label>
-            <input type="number" id="price" name="price" required step="0.01">
-            <button type="submit">Add Service</button>
-        </form>
-        <a href="/dashboard/services">Back to Services</a>
-    <% } %>
+        <% if (view === 'add') { %>
+            <form action="/dashboard/services" method="POST" class="admin-form">
+                <div class="form-group">
+                    <label for="name">Service Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="price">Service Price:</label>
+                    <input type="number" id="price" name="price" required step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Service</button>
+            </form>
+            <a href="/dashboard/services" class="btn btn-secondary">Back to Services</a>
+        <% } %>
 
-    <!-- Display the edit service form -->
-    <% if (view === 'edit') { %>
-        <form id="editServiceForm" method="POST">
-            <input type="hidden" id="serviceId" name="serviceId" value="<%= service.service_id %>">
-            <input type="text" id="serviceName" name="name" value="Current Service Name" required>
-            <textarea id="serviceDescription" name="description" required>Current Description</textarea>
-            <input type="number" id="servicePrice" name="price" value="100" required>
-            <button type="submit">Update Service</button>
-        </form>
-        <br>
-        <a href="/dashboard/services">Back to Services</a>
-    <% } %>
+        <% if (view === 'edit') { %>
+            <form id="editServiceForm" method="POST" class="admin-form">
+                <input type="hidden" id="serviceId" name="serviceId" value="<%= service.service_id %>">
+                <div class="form-group">
+                    <label for="serviceName">Service Name:</label>
+                    <input type="text" id="serviceName" name="name" value="<%= service.name %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceDescription">Description:</label>
+                    <textarea id="serviceDescription" name="description" required><%= service.description %></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="servicePrice">Service Price:</label>
+                    <input type="number" id="servicePrice" name="price" value="<%= service.price %>" required step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Service</button>
+            </form>
+            <a href="/dashboard/services" class="btn btn-secondary">Back to Services</a>
+        <% } %>
+    </main>
 
+    <script>
+        $(document).ready(function() {
+            $('.delete-button').click(function() {
+                const serviceId = $(this).data('id');
+                const row = $('#service-' + serviceId);
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
-<script>
-$(document).ready(function() {
-    $('.delete-button').click(function() {
-        const serviceId = $(this).data('id'); // Get the service ID from the button's data attribute
-        const row = $('#service-' + serviceId); // Get the row to remove
-
-        if (confirm('Are you sure you want to delete this service?')) {
-            $.ajax({
-                url: '/dashboard/services/' + serviceId, // Specify the delete route
-                type: 'DELETE', 
-                success: function(response) {
-                    row.fadeOut(300, function() {
-                        $(this).remove(); // Remove the row from the table
+                if (confirm('Are you sure you want to delete this service?')) {
+                    $.ajax({
+                        url: '/dashboard/services/' + serviceId,
+                        type: 'DELETE',
+                        success: function(response) {
+                            row.fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                            alert('Service deleted successfully!');
+                        },
+                        error: function(xhr) {
+                            alert('An error occurred while deleting the service. Please try again.');
+                        }
                     });
-                    alert('Service deleted successfully!');
-                },
-                error: function(xhr) {
-                    alert('An error occurred while deleting the service. Please try again.');
                 }
             });
-        }
-    });
-    
-});
 
-// Update services blog
-$(document).ready(function() {
-    // Event listener for form submission
-    $('#editServiceForm').on('submit', function(event) {
-        event.preventDefault(); 
+            $('#editServiceForm').on('submit', function(event) {
+                event.preventDefault();
 
-        // Get the form data
-        const serviceId = $('#serviceId').val(); // Get the service ID from the hidden field
-       
-        const serviceData = {
-            name: $('#serviceName').val(),
-            description: $('#serviceDescription').val(),
-            price: $('#servicePrice').val()
-        };
+                const serviceId = $('#serviceId').val();
+                const serviceData = {
+                    name: $('#serviceName').val(),
+                    description: $('#serviceDescription').val(),
+                    price: $('#servicePrice').val()
+                };
 
-        // Check if serviceId is properly retrieved
-        if (!serviceId) {
-            alert("Service ID not found");
-            return;
-        }
+                if (!serviceId) {
+                    alert("Service ID not found");
+                    return;
+                }
 
-        // Send an AJAX request to update the service
-        $.ajax({
-            url: '/dashboard/services/edit/' + serviceId, 
-            type: 'POST',
-            data: serviceData, // Send the form data
-            success: function(response) {
-                alert('Service updated successfully');
-                window.location.href = '/dashboard/services'; // Redirect back to the services list
-            },
-            error: function(xhr) {
-                alert('Error updating service: ' + xhr.responseText);
-            }
+                $.ajax({
+                    url: '/dashboard/services/edit/' + serviceId,
+                    type: 'POST',
+                    data: serviceData,
+                    success: function(response) {
+                        alert('Service updated successfully');
+                        window.location.href = '/dashboard/services';
+                    },
+                    error: function(xhr) {
+                        alert('Error updating service: ' + xhr.responseText);
+                    }
+                });
+            });
         });
-    });
-});
-
-</script>
-
+    </script>
 </body>
 </html>

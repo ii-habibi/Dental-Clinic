@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= action === 'add' ? 'Add New Blog' : action === 'edit' ? 'Edit Blog' : 'Manage Blogs' %> - Dental Clinic Admin</title>
+    <link rel="stylesheet" href="/css/doctors.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="container">
+            <h1 class="admin-title">Dental Clinic Admin</h1>
+            <nav class="admin-nav">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/dashboard/blogs" class="nav-link">Manage Blogs</a>
+                <a href="/dashboard/blogs/add" class="nav-link">Add New Blog</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <% if (action === 'add') { %>
+            <h2>Add New Blog</h2>
+            <form action="/dashboard/blogs" method="POST" class="admin-form">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" id="content" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="author">Author</label>
+                    <input type="text" name="author" id="author">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+        <% } else if (action === 'edit') { %>
+            <h2>Edit Blog</h2>
+            <form action="/dashboard/blogs/edit/<%= blog.blog_id %>" method="POST" class="admin-form">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" value="<%= blog.title %>" required>
+                </div>
+        
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" id="content" required><%= blog.content %></textarea>
+                </div>
+        
+                <div class="form-group">
+                    <label for="author">Author</label>
+                    <input type="text" name="author" id="author" value="<%= blog.author %>">
+                </div>
+        
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+
+        <% } else if (action === 'manage') { %>
+            <h2>Manage Blogs</h2>
+            <a href="/dashboard/blogs/add" class="btn btn-primary">Add New Blog</a>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Published Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% blogs.forEach(blog => { %>
+                            <tr id="blog-<%= blog.blog_id %>">
+                                <td><%= blog.title %></td>
+                                <td><%= blog.author %></td>
+                                <td><%= blog.published_date %></td>
+                                <td>
+                                    <a href="/dashboard/blogs/edit/<%= blog.blog_id %>" class="btn btn-edit">Edit</a>
+                                    <button class="btn btn-delete delete-button" data-id="<%= blog.blog_id %>">Delete</button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('.delete-button').click(function() {
+                        const blogId = $(this).data('id');
+                        const row = $('#blog-' + blogId);
+
+                        if (confirm('Are you sure you want to delete this blog?')) {
+                            $.ajax({
+                                url: '/dashboard/blogs/delete/' + blogId, 
+                                type: 'POST', 
+                                success: function(response) {
+                                    row.fadeOut(300, function() {
+                                        $(this).remove();
+                                    });
+                                    alert('Blog deleted successfully!');
+                                },
+                                error: function(xhr) {
+                                    alert('An error occurred while deleting the blog. Please try again.');
+                                }
+                            });
+                        }
+                    });
+                });
+            </script>
+        <% } %>
+    </main>
+</body>
+</html>

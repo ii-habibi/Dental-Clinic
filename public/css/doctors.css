@@ -1,0 +1,502 @@
+/* Base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f8fb;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Typography */
+h1, h2, h3 {
+    color: #0077be;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+    border-bottom: 2px solid #0077be;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Admin Header */
+.admin-header {
+    background-color: #0077be;
+    color: #ffffff;
+    padding: 1rem 0;
+}
+
+.admin-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.admin-nav {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Doctor Grid */
+.doctor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.doctor-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+.doctor-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.doctor-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Forms */
+.admin-form {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #0077be;
+}
+
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #0077be;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #005fa3;
+}
+
+.btn-edit {
+    background-color: #ffa500;
+    color: #ffffff;
+}
+
+.btn-edit:hover {
+    background-color: #ff8c00;
+}
+
+.btn-delete {
+    background-color: #ff4136;
+    color: #ffffff;
+}
+
+.btn-delete:hover {
+    background-color: #d63a30;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .admin-nav {
+        flex-direction: column;
+    }
+
+    .nav-link {
+        display: block;
+        text-align: center;
+    }
+
+    .doctor-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-form {
+        padding: 15px;
+    }
+}
+
+
+
+/* Blog Management Styles */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-table th {
+    background-color: #f4f8fb;
+    font-weight: bold;
+    color: #0077be;
+}
+
+.admin-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Form Styles */
+.admin-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .admin-table {
+        font-size: 14px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 8px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .admin-table {
+        font-size: 12px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 6px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+
+
+/* Service Management Styles */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-table th {
+    background-color: #f4f8fb;
+    font-weight: bold;
+    color: #0077be;
+}
+
+.admin-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Form Styles */
+.admin-form {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #0077be;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #0077be;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #005fa3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-edit {
+    background-color: #ffa500;
+    color: #ffffff;
+}
+
+.btn-edit:hover {
+    background-color: #ff8c00;
+}
+
+.btn-delete {
+    background-color: #ff4136;
+    color: #ffffff;
+}
+
+.btn-delete:hover {
+    background-color: #d63a30;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .admin-form {
+        padding: 15px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .admin-table {
+        font-size: 14px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .admin-form {
+        padding: 10px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .admin-table {
+        font-size: 12px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 6px;
+    }
+}
+
+/* Appointment Management Styles */
+#appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#appointments-table th,
+#appointments-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#appointments-table th {
+    background-color: #f4f8fb;
+    font-weight: bold;
+    color: #0077be;
+}
+
+#appointments-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Responsive Design for Appointments Table */
+@media screen and (max-width: 1200px) {
+    #appointments-table {
+        font-size: 14px;
+    }
+
+    #appointments-table th,
+    #appointments-table td {
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #appointments-table {
+        font-size: 12px;
+    }
+
+    #appointments-table th,
+    #appointments-table td {
+        padding: 6px;
+    }
+
+    #appointments-table th:nth-child(3),
+    #appointments-table td:nth-child(3),
+    #appointments-table th:nth-child(4),
+    #appointments-table td:nth-child(4),
+    #appointments-table th:nth-child(5),
+    #appointments-table td:nth-child(5) {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #appointments-table th:nth-child(6),
+    #appointments-table td:nth-child(6),
+    #appointments-table th:nth-child(7),
+    #appointments-table td:nth-child(7) {
+        display: none;
+    }
+}
+
+/* Button Styles (if not already defined) */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-delete {
+    background-color: #ff4136;
+    color: #ffffff;
+}
+
+.btn-delete:hover {
+    background-color: #d63a30;
+}

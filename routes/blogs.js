@@ -3,35 +3,35 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../models/db'); 
 
-// Route to get all Blog
+// Route to render the "Manage Blogs" page
 router.get('/', async (req, res) => {
     try {
         const blogs = await pool.query('SELECT * FROM blog');
-        res.render('admin/blogs', { blogs: blogs.rows });
+        res.render('admin/blog', { action: 'manage', blogs: blogs.rows });
     } catch (error) {
         console.error('Error fetching blogs:', error);
         res.status(500).send('Internal Server Error');
     }
 });
 
-// Route to render the add blog form
+// Route to render the "Add Blog" form
 router.get('/add', (req, res) => {
-    res.render('admin/add_blog');
+    res.render('admin/blog', { action: 'add' });
 });
 
-// Route to Handle adding New Blog
+// Route to handle adding a new blog
 router.post('/', async (req, res) => {
     const { title, content, author } = req.body;
     try {
         await pool.query('INSERT INTO blog (title, content, author) VALUES ($1, $2, $3)', [title, content, author]);
-        res.redirect('/dashboard/blogs');
+        res.redirect('/dashboard/blogs'); // Redirect to the "Manage Blogs" page
     } catch (error) {
-        console.error('Error in adding blogs:', error);
+        console.error('Error adding blog:', error);
         res.status(500).send('Internal Server Error');
     }
 });
 
-// Routes to render the edit blog form
+// Route to render the "Edit Blog" form
 router.get('/edit/:id', async (req, res) => {
     const blogId = req.params.id;
 
@@ -41,7 +41,7 @@ router.get('/edit/:id', async (req, res) => {
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
-        res.render('admin/edit_blog', { blog });
+        res.render('admin/blog', { action: 'edit', blog });
     } catch (error) {
         console.error('Error fetching blog for edit:', error);
         res.status(500).send('Internal Server Error');
@@ -53,10 +53,8 @@ router.post('/edit/:id', async (req, res) => {
     const blogId = req.params.id;
     const { title, content, author } = req.body;
     try {
-        await pool.query('UPDATE blog SET title = $1, content = $2, author = $3 WHERE blog_id = $4',
-            [title, content, author, blogId]);
-
-        res.redirect('/dashboard/blogs'); // Redirect to blogs list after editing
+        await pool.query('UPDATE blog SET title = $1, content = $2, author = $3 WHERE blog_id = $4', [title, content, author, blogId]);
+        res.redirect('/dashboard/blogs'); // Redirect to "Manage Blogs" after editing
     } catch (error) {
         console.error('Error updating blog:', error);
         res.status(500).send('Internal Server Error');

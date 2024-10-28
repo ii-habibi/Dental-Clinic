@@ -16,22 +16,18 @@ router.get('/', async (req, res) => {
         const blogs = blogsResult.rows; // Get the rows for blogs
 
 
-            // Query to fetch all doctors from the database
-            const doctorResult = await pool.query('SELECT * FROM doctors');
-            const doctors = doctorResult.rows
-        
-            
+        // Fetch all doctors from the database
+        const doctorResult = await pool.query('SELECT * FROM doctors');
+        const doctors = doctorResult.rows
 
 
-        // Render the home page and pass both services and blogs to the template
-        res.render('user/home', { services, blogs, doctors }); 
+        // Render the home page and pass to the template
+        res.render('user/home', { services, blogs, doctors });
 
     } catch (error) {
         console.error('Error fetching data for user home:', error);
         res.status(500).send('Internal Server Error');
     }
 });
-
-
 
 module.exports = router;

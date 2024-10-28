@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const pool = require('../models/db'); 
+const pool = require('../models/db');
 
 // Route to render the "Manage Blogs" page
 router.get('/', async (req, res) => {

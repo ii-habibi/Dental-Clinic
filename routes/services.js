@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../models/db'); 
+const pool = require('../models/db');
 
 
 
@@ -8,10 +8,10 @@ const pool = require('../models/db');
 router.get('/', async (req, res) => {
     try {
         const services = await pool.query('SELECT * FROM Services'); // Ensure this matches your database setup
-        res.render('admin/services_combined', { 
-            view: 'list', 
-            pageTitle: 'Services', 
-            services: services.rows 
+        res.render('admin/services_combined', {
+            view: 'list',
+            pageTitle: 'Services',
+            services: services.rows
         });
     } catch (error) {
         console.error('Error fetching services:', error); // Log the error for debugging
@@ -32,9 +32,9 @@ router.get('/user', async (req, res) => {
 
 // Route to render the add service form
 router.get('/add', (req, res) => {
-    res.render('admin/services_combined', { 
-        view: 'add', 
-        pageTitle: 'Add Service' 
+    res.render('admin/services_combined', {
+        view: 'add',
+        pageTitle: 'Add Service'
     });
 });
 
@@ -42,7 +42,7 @@ router.get('/add', (req, res) => {
 router.post('/', async (req, res) => {
     const { name, description, price } = req.body; // Get the service name and description from the request body
     try {
-        await pool.query('INSERT INTO Services (name, description, price) VALUES ($1, $2, $3)', [name, description, price]); // Adjust based on your database schema
+        await pool.query('INSERT INTO Services (name, description, price) VALUES ($1, $2, $3)', [name, description, price]);
         res.redirect('/dashboard/services'); // Redirect to the services list after adding
     } catch (error) {
         console.error('Error adding service:', error);
@@ -55,17 +55,17 @@ router.get('/edit/:id', async (req, res) => {
     const serviceId = req.params.id;
 
     try {
-        const result = await pool.query('SELECT * FROM Services WHERE service_id = $1', [serviceId]); // Ensure the table name matches
+        const result = await pool.query('SELECT * FROM Services WHERE service_id = $1', [serviceId]);
         const service = result.rows[0];
 
         if (!service) {
             return res.status(404).send('Service not found');
         }
 
-        res.render('admin/services_combined', { 
-            view: 'edit', 
-            pageTitle: 'Edit Service', 
-            service: service 
+        res.render('admin/services_combined', {
+            view: 'edit',
+            pageTitle: 'Edit Service',
+            service: service
         });
     } catch (error) {
         console.error('Error fetching service for edit:', error);
@@ -80,7 +80,7 @@ router.post('/edit/:id', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'UPDATE Services SET name = $1, description = $2, price = $3 WHERE service_id = $4', // Ensure the table name matches
+            'UPDATE Services SET name = $1, description = $2, price = $3 WHERE service_id = $4',
             [name, description, price, serviceId] // Update the service
         );
         if (result.rowCount > 0) {
@@ -88,9 +88,7 @@ router.post('/edit/:id', async (req, res) => {
         } else {
             res.status(404).send({ message: 'Service not found' });
         }
-    
-    
-        //  res.redirect('/admin/services'); // Redirect to the services list after updating
+
     } catch (error) {
         console.error('Error updating service:', error);
         res.status(500).send('Internal Server Error');

@@ -118,6 +118,18 @@
                     <input type="text" name="patient_name" id="name" required>
                 </div>
                 <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select name="patient_gender" id="gender"  required>
+                        <option>--</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" name="patient_age" id="age" required>
+                </div>
+                <div class="form-group">
                     <label for="email">Email:</label>
                     <input type="email" name="patient_email" id="email" required>
                 </div>
@@ -171,23 +183,30 @@
     });
 
     $.ajax({
-        url: '/dashboard/appointments/book',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data), 
-        success: function(response) {
-            if (response.message === 'Appointment booked successfully') {
-                alert('Appointment booked successfully!');
-                $('#appointmentForm')[0].reset();
-            } else {
-                alert(response.message);
+            url: '/dashboard/appointments/book',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data), 
+            success: function(response) {
+                if (response.message === 'Appointment booked successfully') {
+                    alert('Appointment booked successfully!');
+                    $('#appointmentForm')[0].reset();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr) {
+                // Check if there's a specific error message in the response
+                const response = xhr.responseJSON;
+                if (response && response.message) {
+                    alert(response.message); // Show the server error message
+                } else {
+                    alert('An error occurred while booking the appointment.');
+                }
+                console.error('Error booking appointment:', xhr.status, xhr.statusText);
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error booking appointment:', error);
-        }
+        });
     });
-});
 
 
 

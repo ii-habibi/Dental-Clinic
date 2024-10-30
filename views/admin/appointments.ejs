@@ -57,9 +57,17 @@
                             <td><%= appointment.treatment_type %></td>
                             <td><%= appointment.visit_type %></td>
                             <td><%= appointment.status %></td>
-                            <td>
-                                <button class="btn btn-delete delete-button" data-id="<%= appointment.appointment_id %>">Delete</button>
-                            </td>
+                            
+
+                                <td>
+                                    <% if (appointment.status !== 'Approved' && appointment.status !== 'Rejected') { %>
+                                        <button class="btn-status btn-approve" data-id="<%= appointment.appointment_id %>" data-status="Approved">Approve</button>
+                                        <button class="btn-status btn-reject" data-id="<%= appointment.appointment_id %>" data-status="Rejected">Reject</button>
+                                    <% } %>
+                                    <button class="btn btn-delete delete-button" data-id="<%= appointment.appointment_id %>">Delete</button>
+                                </td>
+                                
+                           
                         </tr>
                     <% }) %>
                 </tbody>
@@ -91,7 +99,7 @@
                 </div>
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" name="patient_email" id="email" required>
+                    <input type="email" name="patient_email" id="email">
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone Number:</label>

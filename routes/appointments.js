@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
                 appointment.appointment_time, 
                 appointment.treatment_type, 
                 appointment.visit_type,
+                appointment.notes,
                 appointment.status 
             FROM 
                 appointment
@@ -57,7 +58,7 @@ router.get('/book', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { patient_name, patient_gender, patient_age, patient_email, patient_phone, doctor_id, appointment_date, appointment_time, treatment_type, visit_type } = req.body;
+    const { patient_name, patient_gender, patient_age, patient_email, patient_phone, doctor_id, appointment_date, appointment_time, treatment_type, notes, visit_type } = req.body;
 
     try {
         let patientResult;
@@ -89,8 +90,8 @@ router.post('/', async (req, res) => {
 
         // Insert the new appointment with reference to patient_id
         await pool.query(
-            'INSERT INTO appointment (patient_id, doctor_id, appointment_date, appointment_time, treatment_type, status, visit_type) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [patientId, doctor_id, appointment_date || new Date(), appointment_time || null, treatment_type, 'Pending', visit_type]
+            'INSERT INTO appointment (patient_id, doctor_id, appointment_date, appointment_time, treatment_type, status, visit_type, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [patientId, doctor_id, appointment_date || new Date(), appointment_time || null, treatment_type, 'Pending', visit_type, notes]
         );
 
         res.status(201).json({ message: 'Appointment booked successfully' });

@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointments - Dental Clinic Admin</title>
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/appointment.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/appointments.js"></script>
 </head>
-
 <body>
     <header class="admin-header">
         <div class="container">
@@ -21,161 +19,99 @@
         </div>
     </header>
 
-    <main class="container">
-        <h2>All Appointments</h2>
-        <button id="openAppointmentForm" class="btn btn-primary">Add New Appointment</button>
-
-        <div class="table-responsive">
-            <table class="admin-table" id="appointments-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Gender</th>
-                        <th>Age</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Doctor</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Treatment</th>
-                        <th>Visit Type</th>
-                        <th>Notes</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% appointments.forEach(appointment=> { %>
-                        <tr id="appointment-<%= appointment.appointment_id %>">
-                            <td>
-                                <%= appointment.name %>
-                            </td>
-                            <td>
-                                <%= appointment.gender %>
-                            </td>
-                            <td>
-                                <%= appointment.age %>
-                            </td>
-                            <td>
-                                <%= appointment.email %>
-                            </td>
-                            <td>
-                                <%= appointment.phone %>
-                            </td>
-                            <td>
-                                <%= appointment.doctor_name %>
-                            </td>
-                            <td>
-                                <%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short'
-                                    , day: 'numeric' , year: 'numeric' }) %>
-                            </td>
-                            <td>
-                                <%= appointment.appointment_time ? appointment.appointment_time : 'N/A' %>
-                            </td>
-                            <td>
-                                <%= appointment.treatment_type %>
-                            </td>
-                            <td>
-                                <%= appointment.visit_type %>
-                            </td>
-                            <td><%= appointment.notes %></td>
-                            <!-- Status text, initially styled based on its value -->
-                            <td class="status-text <%= 'status-' + appointment.status.toLowerCase() %>">
-                                <%= appointment.status %>
-                            </td>
-
-
-                            <td>
-                                <% if (appointment.status=='Pending' ) { %>
-                                    <button class="btn-status btn-approve" data-id="<%= appointment.appointment_id %>"
-                                        data-status="Approved">Approve</button>
-                                    <button class="btn-status btn-reject" data-id="<%= appointment.appointment_id %>"
-                                        data-status="Rejected">Reject</button>
-                                    <% } else if(appointment.status=='Approved' ) { %>
-                                        <button class="btn-status btn-completed"
-                                            data-id="<%= appointment.appointment_id %>"
-                                            data-status="Completed">Completed</button>
-                                        <% } %>
-
-                                            <button class="btn btn-delete delete-button"
-                                                data-id="<%= appointment.appointment_id %>">Delete</button>
-                            </td>
-
-
-                        </tr>
-                        <% }) %>
-                </tbody>
-            </table>
-        </div>
+    <main class="dashboard-layout">
+        <aside class="appointment-list">
+            <div class="appointment-list-header">
+                <h2>Appointments</h2>
+                <button id="openAppointmentForm" class="btn btn-primary">New Appointment</button>
+            </div>
+            <div class="appointment-items">
+                <% appointments.forEach(appointment => { %>
+                    <div class="appointment-item" data-id="<%= appointment.appointment_id %>">
+                        <div class="appointment-summary">
+                            <h3><%= appointment.name %></h3>
+                            <p><%= appointment.treatment_type %></p>
+                            <span class="appointment-date"><%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+                            <span class="appointment-status status-<%= appointment.status.toLowerCase() %>"><%= appointment.status %></span>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </aside>
+        
+        <section class="appointment-details">
+            <div id="appointmentDetailsContent"></div>
+        </section>
     </main>
 
     <!-- Appointment Form Modal -->
     <div id="appointmentFormModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 class="tooth-icon">Book an Appointment</h2>
+            <h2>Book an Appointment</h2>
             <form id="appointmentForm" class="appointment-form">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" name="patient_name" id="name" required>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" name="patient_name" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select name="patient_gender" id="gender">
+                            <option value="">--</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" name="patient_age" id="age">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" name="patient_email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="tel" name="patient_phone" id="phone">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="gender">Gender:</label>
-                    <select name="patient_gender" id="gender">
-                        <option>--</option>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="age">Age:</label>
-                    <input type="number" name="patient_age" id="age">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" name="patient_email" id="email">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number:</label>
-                    <input type="tel" name="patient_phone" id="phone">
-                </div>
-                <div class="form-group">
-                    <label for="doctor">Select Doctor:</label>
-                    <select name="doctor_id" id="doctor" required>
-                        <% doctors.forEach(doctor=> { %>
-                            <option value="<%= doctor.id %>">
-                                <%= doctor.name %>
-                            </option>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="doctor">Select Doctor:</label>
+                        <select name="doctor_id" id="doctor" required>
+                            <% doctors.forEach(doctor => { %>
+                                <option value="<%= doctor.id %>"><%= doctor.name %></option>
                             <% }) %>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="date">Date:</label>
-                    <input type="date" name="appointment_date" id="date">
-                </div>
-                <div class="form-group">
-                    <label for="time">Time:</label>
-                    <input type="time" name="appointment_time" id="time">
-                </div>
-                <div class="form-group">
-                    <label for="treatment">Treatment Type:</label>
-                    <input type="text" name="treatment_type" id="treatment">
-                </div>
-                <div class="form-group">
-                    <label for="notes">Notes:</label>
-                    <input type="text" name="notes" id="notes" >
-                </div>
-                <div class="form-group">
-                    <label for="visitType">Visit Type:</label>
-                    <select name="visit_type" id="visitType">
-                        <option value="first">First Visit</option>
-                        <option value="return">Return Patient</option>
-                    </select>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" name="appointment_date" id="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Time:</label>
+                        <input type="time" name="appointment_time" id="time">
+                    </div>
+                    <div class="form-group">
+                        <label for="treatment">Treatment Type:</label>
+                        <input type="text" name="treatment_type" id="treatment">
+                    </div>
+                    <div class="form-group">
+                        <label for="visitType">Visit Type:</label>
+                        <select name="visit_type" id="visitType">
+                            <option value="first">First Visit</option>
+                            <option value="return">Return Patient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes:</label>
+                        <textarea name="notes" id="notes"></textarea>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Book Appointment</button>
             </form>
         </div>
     </div>
 </body>
-
 </html>

@@ -44,6 +44,49 @@ router.get('/', async (req, res) => {
     }
 });
 
+// New AJAX route to get specific appointment details by ID
+router.get('/:appointmentId', async (req, res) => {
+    const { appointmentId } = req.params;
+
+    try {
+        const result = await pool.query(`
+            SELECT
+                appointment.appointment_id, 
+                patients.name AS patient_name,
+                patients.gender,
+                patients.age,
+                patients.email,
+                patients.phone,
+                doctors.name AS doctor_name, 
+                appointment.appointment_date, 
+                appointment.appointment_time, 
+                appointment.treatment_type, 
+                appointment.visit_type,
+                appointment.notes,
+                appointment.status 
+            FROM 
+                appointment
+            JOIN 
+                patients ON appointment.patient_id = patients.patient_id
+            JOIN 
+                doctors ON appointment.doctor_id = doctors.id
+            WHERE 
+                appointment.appointment_id = $1
+        `, [appointmentId]);
+
+        const appointment = result.rows[0];
+
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+        res.json({ appointment });
+    } catch (error) {
+        console.error('Error fetching appointment:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
 
 // Route to render the appointment booking form
 router.get('/book', async (req, res) => {

@@ -152,6 +152,10 @@ input[type="file"] {
     transition: background-color 0.3s ease;
 }
 
+.status-approved { color: green; font-weight: bold; }
+.status-rejected { color: red; font-weight: bold; }
+.status-completed { color: rgb(26, 26, 167); font-weight: bold; }
+
 .btn-reject {
     background-color: #d63a30;
     color: #ffffff;
@@ -161,6 +165,10 @@ input[type="file"] {
     color: #ffffff;
 }
 
+.btn-completed {
+    background-color: #005fa3;
+    color: #ffffff;
+}
 .btn-primary:hover {
     background-color: #005fa3;
 }

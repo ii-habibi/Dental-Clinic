@@ -9,6 +9,10 @@ router.get('/', (req, res) => {
     res.render('admin/admin_dashboard');
 });
 
+// Route to get patients
+const patientRoutes = require("./patients")
+router.use("/patients", patientRoutes)
+
 // Import Services routes
 const servicesRoutes = require("./services")
 router.use("/services", servicesRoutes);

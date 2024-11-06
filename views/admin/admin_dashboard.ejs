@@ -5,19 +5,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/css/admin_routes.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #appointments-bar-chart {
+            max-width: 600px;
+            max-height: 400px;
+            width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-    <h1>Welcom to Admin Dashboard</h1>
-
     
     <div>
-        <a href="/dashboard/services" class="btn btn-primary">Manage Services</a>
-        <a href="/dashboard/blogs" class="btn btn-primary">Manage Blogs</a>
-        <a href="/dashboard/doctor" class="btn btn-primary">Doctors</a>
-        <a href="/dashboard/appointments" class="btn btn-primary">Appointments</a>
-        <a href="/dashboard/patients" class="btn btn-primary">Patients</a>
+        <h1>Welcome to Admin Dashboard</h1>
+        <div>
+            <a href="/dashboard/services">Manage Services</a>
+            <a href="/dashboard/blogs">Manage Blogs</a>
+            <a href="/dashboard/doctor">Doctors</a>
+            <a href="/dashboard/appointments">Appointments</a>
+            <a href="/dashboard/patients">Patients</a>
+        </div>
+
+        <!-- Pending Appointment Requests -->
+        <div>
+            <h2>Pending Appointment Requests</h2>
+            <table id="pending-appointments-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Appointment Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Pending appointments will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Dashboard Statistics -->
+        <div>
+            <h2>Dashboard Stats</h2>
+            <p>Total Patients: <span id="total-patients">Loading...</span></p>
+            <p>Total Returning Patients: <span id="returning-patients">Loading...</span></p>
+        </div>
+
+        <!-- Upcoming Appointments Section -->
+        <div>
+            <h2>Upcoming Appointments</h2>
+            <table id="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Appointment Date</th>
+                        <th>Treatment Type</th>
+                        <th>Doctor</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Upcoming appointments will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Graph of Completed Appointments by Month -->
+        <div>
+            <h2>Completed Appointments by Month</h2>
+            <canvas id="appointments-bar-chart" ></canvas>
+        </div>
     </div>
-</div>
+
+    <script>
+        $(document).ready(function () {
+            // Fetch total patients, returning patients, and upcoming appointments data
+            function fetchDashboardData() {
+                $.ajax({
+                    url: '/dashboard/data',
+                    method: 'GET',
+                    success: function (data) {
+                        $('#total-patients').text(data.totalPatients);
+                        $('#returning-patients').text(data.returningPatients);
+
+                        let appointmentsHtml = '';
+                        data.upcomingAppointments.forEach(function (appointment) {
+                            appointmentsHtml += `
+                                <tr>
+                                    <td>${appointment.patient_name}</td>
+                                    <td>${new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                                    <td>${appointment.treatment_type}</td>
+                                    <td>${appointment.doctor_name}</td>
+                                    <td>${appointment.status}</td>
+                                </tr>
+                            `;
+                        });
+                        $('#appointments-table tbody').html(appointmentsHtml);
+
+                        let pendingAppointmentsHtml = '';
+                        data.pendingAppointment.forEach(function (appointment) {
+                            pendingAppointmentsHtml += `
+                                <tr>
+                                    <td>${appointment.patient_name}</td>
+                                    <td>${new Date(appointment.appointment_date).toLocaleDateString('en-US')}</td>
+                                </tr>
+                            `;
+                        });
+                        $('#pending-appointments-table tbody').html(pendingAppointmentsHtml);
+
+                        // Display updated appointments graph
+                        displayAppointmentsGraph(data.completedAppointmentsByMonth);
+                    }
+                });
+            }
+
+            // Display Completed Appointments Graph using Chart.js
+            function displayAppointmentsGraph(appointmentsByMonth) {
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const ctx = $('#appointments-bar-chart');
+                const chartData = {
+                    labels: appointmentsByMonth.months.map(month => monthNames[month - 1]), // Map month numbers to month names
+                    datasets: [{
+                        label: 'Completed Appointments',
+                        data: appointmentsByMonth.completedCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)', // Lighter color for better visualization
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                };
+
+                const options = {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `Completed: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Appointments'
+                            }
+                        }
+                    }
+                };
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: options
+                });
+            }
+
+            // Initialize dashboard data fetch
+            fetchDashboardData();
+        });
+    </script>
 </body>
 </html>

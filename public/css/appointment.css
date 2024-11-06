@@ -203,12 +203,19 @@ body {
 .btn-primary:hover {
     background-color: #005fa3;
 }
+.btn-edit:hover {
+    background-color: #ffb300;
+}
+
 
 .btn-approve { background-color: var(--status-approved); color: white; }
 .btn-reject { background-color: var(--status-rejected); color: white; }
 .btn-complete { background-color: var(--status-completed); color: white; }
 .btn-delete { background-color: #dc3545; color: white; }
-
+.btn-edit {
+    background-color: #ffc107;
+    color: #000;
+}
 /* Modal styles */
 .modal {
     display: none;
@@ -223,11 +230,11 @@ body {
 }
 
 .modal-content {
-    background-color: var(--card-background);
-    margin: 10% auto;
-    padding: 2rem;
-    border: 1px solid var(--border-color);
-    width: 90%;
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
     max-width: 800px;
     border-radius: 8px;
 }
@@ -251,7 +258,7 @@ body {
 .appointment-form {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 20px;
 }
 
 .form-column {
@@ -260,23 +267,21 @@ body {
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 0.5rem;
+    padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    font-size: 1rem;
 }
 
 .form-group textarea {

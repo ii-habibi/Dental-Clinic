@@ -1,10 +1,17 @@
-<!-- views/patients.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Manage Patients</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .appointment-details {
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Patient Management</h1>
 
@@ -18,9 +25,9 @@
     <h2>Add New Patient</h2>
     <form action="/dashboard/patients/" method="POST">
         <input type="text" name="name" placeholder="Name" required>
-        <input type="number" name="age" placeholder="Age" >
-        <input type="text" name="gender" placeholder="Gender" >
-        <input type="email" name="email" placeholder="Email" >
+        <input type="number" name="age" placeholder="Age">
+        <input type="text" name="gender" placeholder="Gender">
+        <input type="email" name="email" placeholder="Email">
         <input type="text" name="phone" placeholder="Phone" required>
         <input type="text" name="address" placeholder="Address">
         <button type="submit">Add Patient</button>
@@ -28,30 +35,210 @@
 
     <!-- List of Patients -->
     <h2>All Patients</h2>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Gender</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Actions</th>
-        </tr>
-        <% patients.forEach(patient => { %>
-            <tr id="">
-                <td><%= patient.name %></td>
-                <td><%= patient.age %></td>
-                <td><%= patient.gender %></td>
-                <td><%= patient.email %></td>
-                <td><%= patient.phone %></td>
-                <td><%= patient.address %></td>
-                <td>
-                    <a href="/dashboard/patients/edit/<%= patient.patient_id %>">Edit</a>
-                    <a href="/dashboard/patients/delete/<%= patient.patient_id %>">Delete</a>
-                </td>
+    <% if (patients.length> 0) { %>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Appointments</th>
+                <th>Actions</th>
             </tr>
-        <% }) %>
-    </table>
+            <% patients.forEach(patient=> { %>
+                <tr>
+                    <td>
+                        <%= patient.name %>
+                    </td>
+                    <td>
+                        <%= patient.age %>
+                    </td>
+                    <td>
+                        <%= patient.gender %>
+                    </td>
+                    <td>
+                        <%= patient.email %>
+                    </td>
+                    <td>
+                        <%= patient.phone %>
+                    </td>
+                    <td>
+                        <%= patient.address %>
+                    </td>
+                    <td>
+                        <%= patient.appointment_count %>
+                            <button data-toggle="details" data-patient-id="<%= patient.patient_id %>">View</button>
+
+                    </td>
+                    <td><button data-toggle="edit" data-patient='<%= JSON.stringify(patient) %>'>Edit</button>
+
+                        <button class="delete-btn" data-patient-id="<%= patient.patient_id %>">Delete</button>
+
+                    </td>
+
+                </tr>
+
+                <!-- Appointment details section -->
+                <tr id="appointments-<%= patient.patient_id %>" class="appointment-details">
+                    <td colspan="8">
+                        <h4>Appointment History</h4>
+                        <% if (Array.isArray(patient.appointments) && patient.appointments.length> 0) { %>
+                            <% patient.appointments.forEach(appointment=> { %>
+                                <div>
+                                    <p>Date: <%= appointment.appointment_date %>
+                                    </p>
+                                    <p>Time: <%= appointment.appointment_time %>
+                                    </p>
+                                    <p>Doctor: <%= appointment.doctor_name %>
+                                    </p>
+                                    <p>Treatment Type: <%= appointment.treatment_type %>
+                                    </p>
+                                    <p>Notes: <%= appointment.notes %>
+                                    </p>
+                                    <p>Status: <%= appointment.status %>
+                                    </p>
+                                </div>
+                                <hr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <p>No appointment history available for this patient.</p>
+                                        <% } %>
+                    </td>
+                </tr>
+                <% }) %>
+        </table>
+        <% } else { %>
+            <p>No patients found for your search criteria.</p>
+            <% } %>
+
+                <!-- Hidden Edit Form Modal -->
+                <div id="editModal" style="display: none;">
+                    <h2>Edit Patient</h2>
+                    <form id="editPatientForm">
+                        <input type="hidden" name="patient_id" id="edit_patient_id">
+                        <label>Name: </label>
+                        <input type="text" name="name" id="edit_name" required>
+                        <label>Age: </label>
+                        <input type="number" name="age" id="edit_age">
+                        <label>Gender: </label>
+                        <input type="text" name="gender" id="edit_gender">
+                        <label>Email: </label>
+                        <input type="email" name="email" id="edit_email">
+                        <label>Phone: </label>
+                        <input type="text" name="phone" id="edit_phone" required>
+                        <label>Address: </label>
+                        <input type="text" name="address" id="edit_address">
+                        <button type="submit">Save Changes</button>
+                        <button type="button" onclick="closeModal()">Cancel</button>
+                    </form>
+                </div>
+
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        // Function to toggle appointment details
+                        function toggleDetails(id) {
+                            const $details = $('#' + id);
+                            $details.toggle();
+                        }
+
+                        // Function to open the edit modal and populate the form with existing patient data
+                        function openEditModal(button) {
+                            const patient = JSON.parse($(button).attr('data-patient'));
+                            $('#edit_patient_id').val(patient.patient_id);
+                            $('#edit_name').val(patient.name);
+                            $('#edit_age').val(patient.age);
+                            $('#edit_gender').val(patient.gender);
+                            $('#edit_email').val(patient.email);
+                            $('#edit_phone').val(patient.phone);
+                            $('#edit_address').val(patient.address);
+                            $('#editModal').show();
+                        }
+
+                        // Function to close the modal
+                        function closeModal() {
+                            $('#editModal').hide();
+                        }
+
+                        // AJAX form submission for updating patient data
+                        $('#editPatientForm').on('submit', function (event) {
+                            event.preventDefault();
+
+                            const patient_id = $('#edit_patient_id').val();
+                            const data = {
+                                name: $('#edit_name').val(),
+                                age: $('#edit_age').val(),
+                                gender: $('#edit_gender').val(),
+                                email: $('#edit_email').val(),
+                                phone: $('#edit_phone').val(),
+                                address: $('#edit_address').val()
+                            };
+
+                            $.ajax({
+                                url: `/dashboard/patients/${patient_id}`,
+                                type: 'PATCH',
+                                contentType: 'application/json',
+                                data: JSON.stringify(data),
+                                success: function (response) {
+                                    closeModal();
+                                    alert('Patient updated successfully');
+                                    location.reload(); // Reload to show updated data
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("Error updating patient:", error);
+                                    alert('Error updating patient');
+                                }
+                            });
+                        });
+
+                        // Event listeners for toggle and edit modal
+                        $(document).on('click', '[data-toggle="details"]', function () {
+                            const patientId = $(this).data('patient-id');
+                            toggleDetails('appointments-' + patientId);
+                        });
+
+                        $(document).on('click', '[data-toggle="edit"]', function () {
+                            openEditModal(this);
+                        });
+
+                        $(document).ready(function () {
+                            // Handle delete button click
+                            $(document).on('click', '.delete-btn', function () {
+                                const patientId = $(this).data('patient-id');
+
+                                // Confirm if the user wants to delete both the patient and their appointments
+                                const confirmDelete = confirm("Are you sure you want to delete this patient? All associated appointments will be deleted as well.");
+
+                                if (confirmDelete) {
+                                    // Make AJAX request to delete the patient and their appointments
+                                    $.ajax({
+                                        url: `/dashboard/patients/delete/${patientId}`,
+                                        type: 'GET',
+                                        success: function (response) {
+                                            if (response.success) {
+                                                // If successful, reload the page or update the UI
+                                                alert("Patient and associated appointments deleted successfully.");
+                                                location.reload(); // Reload the page to reflect the changes
+                                            } else {
+                                                alert("Error deleting patient and appointments.");
+                                            }
+                                        },
+                                        error: function (error) {
+                                            console.error("Error deleting patient and appointments:", error);
+                                            alert("Error deleting patient and appointments.");
+                                        }
+                                    });
+                                }
+                            });
+                        });
+
+
+
+                    });
+                </script>
+
 </body>
+
 </html>

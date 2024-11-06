@@ -27,10 +27,11 @@ router.get('/', async (req, res) => {
                 patients ON appointment.patient_id = patients.patient_id
             JOIN 
                 doctors ON appointment.doctor_id = doctors.id  
+            ORDER BY	
+				appointment.appointment_id DESC
         `);
 
         const appointments = result.rows;
-        
         const doctorsResult = await pool.query(`
             SELECT * FROM doctors
             `)
@@ -57,6 +58,7 @@ router.get('/:appointmentId', async (req, res) => {
                 patients.age,
                 patients.email,
                 patients.phone,
+                doctors.id AS doctor_id,
                 doctors.name AS doctor_name, 
                 appointment.appointment_date, 
                 appointment.appointment_time, 
@@ -71,7 +73,7 @@ router.get('/:appointmentId', async (req, res) => {
             JOIN 
                 doctors ON appointment.doctor_id = doctors.id
             WHERE 
-                appointment.appointment_id = $1
+                appointment.appointment_id = $1  
         `, [appointmentId]);
 
         const appointment = result.rows[0];
@@ -176,7 +178,7 @@ router.delete('/delete/:id', async (req, res) => {
 
             // Commit the transaction
             await pool.query('COMMIT');
-            res.status(200).json({ message: 'Appointment and patient data deleted successfully' });
+            res.status(200).json({ message: 'Appointment deleted successfully' });
         } else {
             res.status(404).json({ message: 'Appointment not found' });
         }
@@ -191,7 +193,6 @@ router.delete('/delete/:id', async (req, res) => {
 router.put('/status/:id', async (req, res) => {
     const appointmentId = req.params.id;
     const { status } = req.body;
- console.log("appointment id =" + appointmentId + " adn "  + status)
     try {
        
         const result = await pool.query(`
@@ -228,6 +229,64 @@ router.put('/status/:id', async (req, res) => {
 });
 
 
+router.patch('/:id', async (req, res) => {
+    const appointmentId = req.params.id;
+    
+    const {
+        patient_name,
+        patient_gender,
+        patient_age,
+        patient_email,
+        patient_phone,
+        doctor_id,
+        appointment_date,
+        appointment_time,
+        treatment_type,
+        notes,
+        visit_type,
+    } = req.body;
+
+    try {
+        let patientResult;
+        let patientId;
+
+        // Check if patient exists by email or phone
+        if (patient_email) {
+            patientResult = await pool.query('SELECT * FROM patients WHERE email = $1', [patient_email]);
+        } else if (patient_phone) {
+            patientResult = await pool.query('SELECT * FROM patients WHERE phone = $1', [patient_phone]);
+        }
+
+        if (patientResult && patientResult.rows.length > 0) {
+            patientId = patientResult.rows[0].patient_id;
+        } else {
+            // Insert new patient if none exists
+            const newPatient = await pool.query(
+                'INSERT INTO patients (name, gender, age, email, phone) VALUES ($1, $2, $3, $4, $5) RETURNING patient_id',
+                [patient_name, patient_gender, patient_age || null, patient_email, patient_phone]
+            );
+            patientId = newPatient.rows[0].patient_id;
+        }
+
+        // Update appointment data with the referenced patient_id
+        const result = await pool.query(
+            `UPDATE appointment 
+             SET patient_id = $1, doctor_id = $2, appointment_date = $3, 
+                 appointment_time = $4, treatment_type = $5, notes = $6, visit_type = $7
+             WHERE appointment_id = $8`,
+            [patientId, doctor_id, appointment_date || new Date(), appointment_time || null, treatment_type, notes, visit_type, appointmentId]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        res.json({ message: 'Appointment updated successfully' });
+    } catch (error) {
+        console.error('Error updating appointment:', error);
+        res.status(500).json({ message: 'An error occurred while updating the appointment' });
+    }
+});
 
 
 module.exports = router;

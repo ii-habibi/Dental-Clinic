@@ -1,19 +1,23 @@
 $(document).ready(function() {
     const modal = $("#appointmentFormModal");
+    const editModal = $("#editAppointmentModal");
     const openModalBtn = $("#openAppointmentForm");
     const closeModalBtn = $(".close");
 
     openModalBtn.click(() => modal.css("display", "block"));
 
-    closeModalBtn.click(() => {
-        modal.css("display", "none");
+    closeModalBtn.click(function() {
+        $(this).closest('.modal').css("display", "none");
         $('#appointmentForm')[0].reset();
+        $('#editAppointmentForm')[0].reset();
     });
 
     $(window).click((event) => {
-        if (event.target === modal[0]) {
+        if (event.target === modal[0] || event.target === editModal[0]) {
             modal.css("display", "none");
+            editModal.css("display", "none");
             $('#appointmentForm')[0].reset();
+            $('#editAppointmentForm')[0].reset();
         }
     });
 
@@ -66,7 +70,7 @@ $(document).ready(function() {
                             <h3>Patient Information</h3>
                             <div class="info-group">
                                 <label>Name:</label>
-                                <span>${appointment.name}</span>
+                                <span>${appointment.patient_name}</span>
                             </div>
                             <div class="info-group">
                                 <label>Gender:</label>
@@ -105,7 +109,8 @@ $(document).ready(function() {
                             </div>
                             <div class="info-group">
                                 <label>Status:</label>
-                                <span class="appointment-status status-${appointment.status.toLowerCase()}">${appointment.status}</span>
+                            <span class="appointment-status status-${appointment.status.toLowerCase()}">${appointment.status}</span>
+
                             </div>
                         </div>
                     </div>
@@ -143,18 +148,23 @@ $(document).ready(function() {
                 <button class="btn btn-complete" data-id="${appointment.appointment_id}" data-status="Completed">Mark as Completed</button>
             `;
         }
-        buttons += `<button class="btn btn-delete" data-id="${appointment.appointment_id}">Delete</button>`;
+        buttons += `
+            <button class="btn btn-edit" data-id="${appointment.appointment_id}">Edit</button>
+            <button class="btn btn-delete" data-id="${appointment.appointment_id}">Delete</button>
+        `;
         return buttons;
     }
 
-    // Event delegation for approve, reject, complete, and delete actions
-    $(document).on('click', '.btn-approve, .btn-reject, .btn-complete, .btn-delete', function() {
+    // Event delegation for approve, reject, complete, edit, and delete actions
+    $(document).on('click', '.btn-approve, .btn-reject, .btn-complete, .btn-edit, .btn-delete', function() {
         const $button = $(this);
         const appointmentId = $button.data('id');
         const status = $button.data('status');
 
         if ($button.hasClass('btn-delete')) {
             handleDelete(appointmentId);
+        } else if ($button.hasClass('btn-edit')) {
+            handleEdit(appointmentId);
         } else {
             handleStatusChange(appointmentId, status);
         }
@@ -200,6 +210,67 @@ $(document).ready(function() {
         }
     }
 
+    function handleEdit(appointmentId) {
+        $.ajax({
+            url: `/dashboard/appointments/${appointmentId}`,
+            type: 'GET',
+            success: (appointmentData) => {
+                const appointment = appointmentData.appointment;
+                populateEditForm(appointment);
+                editModal.css("display", "block");
+            },
+            error: (xhr) => {
+                console.error('Error fetching appointment details:', xhr.status, xhr.statusText);
+            }
+        });
+    }
+
+    function populateEditForm(appointment) {
+        $('#edit-appointment-id').val(appointment.appointment_id);
+        $('#edit-name').val(appointment.patient_name);
+        $('#edit-gender').val(appointment.gender);
+        $('#edit-age').val(appointment.age);
+        $('#edit-email').val(appointment.email);
+        $('#edit-phone').val(appointment.phone);
+        $('#edit-doctor').val(appointment.doctor_id);
+        $('#edit-date').val(appointment.appointment_date.split('T')[0]);
+        $('#edit-time').val(appointment.appointment_time);
+        
+        $('#edit-treatment').val(appointment.treatment_type);
+        $('#edit-visitType').val(appointment.visit_type);
+        $('#edit-notes').val(appointment.notes);
+        $('#edit-status').val(appointment.status);  // Ensure this input exists in the form
+
+    }
+
+    $('#editAppointmentForm').on('submit', function(event) {
+        event.preventDefault();
+        const formData = $(this).serializeArray();
+        const data = {};
+        formData.forEach(item => (data[item.name] = item.value));
+
+        $.ajax({
+            url: `/dashboard/appointments/${data.appointment_id}`,
+            type: 'PATCH',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (response) => {
+                alert('Appointment updated successfully!');
+                editModal.css("display", "none");
+                $('#editAppointmentForm')[0].reset();
+                loadAppointmentDetails(data.appointment_id);
+                updateAppointmentItem(data.appointment_id, data.status);
+            },
+            error: (xhr) => {
+                const response = xhr.responseJSON;
+                alert(response && response.message
+                    ? response.message
+                    : 'An error occurred while updating the appointment.'
+                );
+            }
+        });
+    });
+
     function updateAppointmentItem(appointmentId, status) {
         const $appointmentItem = $(`.appointment-item[data-id="${appointmentId}"]`);
         $appointmentItem.find('.appointment-status')
@@ -207,4 +278,5 @@ $(document).ready(function() {
             .addClass(`status-${status.toLowerCase()}`)
             .text(status);
     }
+    
 });

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/appointments.js"></script>
 </head>
+
 <body>
     <header class="admin-header">
         <div class="container">
@@ -26,19 +28,28 @@
                 <button id="openAppointmentForm" class="btn btn-primary">New Appointment</button>
             </div>
             <div class="appointment-items">
-                <% appointments.forEach(appointment => { %>
+                <% appointments.forEach(appointment=> { %>
                     <div class="appointment-item" data-id="<%= appointment.appointment_id %>">
                         <div class="appointment-summary">
-                            <h3><%= appointment.name %></h3>
-                            <p><%= appointment.treatment_type %></p>
-                            <span class="appointment-date"><%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
-                            <span class="appointment-status status-<%= appointment.status.toLowerCase() %>"><%= appointment.status %></span>
+                            <h3>
+                                <%= appointment.name %>
+                            </h3>
+                            <p>
+                                <%= appointment.treatment_type %>
+                            </p>
+                            <span class="appointment-date">
+                                <%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short'
+                                    , day: 'numeric' , year: 'numeric' }) %>
+                            </span>
+                            <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
+                                <%= appointment.status %>
+                            </span>
                         </div>
                     </div>
-                <% }) %>
+                    <% }) %>
             </div>
         </aside>
-        
+
         <section class="appointment-details">
             <div id="appointmentDetailsContent"></div>
         </section>
@@ -80,9 +91,11 @@
                     <div class="form-group">
                         <label for="doctor">Select Doctor:</label>
                         <select name="doctor_id" id="doctor" required>
-                            <% doctors.forEach(doctor => { %>
-                                <option value="<%= doctor.id %>"><%= doctor.name %></option>
-                            <% }) %>
+                            <% doctors.forEach(doctor=> { %>
+                                <option value="<%= doctor.id %>">
+                                    <%= doctor.name %>
+                                </option>
+                                <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
@@ -113,5 +126,81 @@
             </form>
         </div>
     </div>
+
+    <!-- Edit Appointment Form Modal -->
+    <div id="editAppointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Appointment</h2>
+            <form id="editAppointmentForm" class="appointment-form">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="edit-name">Name:</label>
+                        <input type="text" name="patient_name" id="edit-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-gender">Gender:</label>
+                        <select name="patient_gender" id="edit-gender">
+                            <option value="">--</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-age">Age:</label>
+                        <input type="number" name="patient_age" id="edit-age">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email:</label>
+                        <input type="email" name="patient_email" id="edit-email">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-phone">Phone Number:</label>
+                        <input type="tel" name="patient_phone" id="edit-phone">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="edit-doctor">Select Doctor:</label>
+                        <select name="doctor_id" id="edit-doctor">
+                            <% doctors.forEach(doctor=> { %>
+                                <option value="<%= doctor.id %>">
+                                    <%= doctor.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-date">Date:</label>
+                        <input type="date" name="appointment_date" id="edit-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-time">Time:</label>
+                        <input type="time" name="appointment_time" id="edit-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-treatment">Treatment Type:</label>
+                        <input type="text" name="treatment_type" id="edit-treatment">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-visitType">Visit Type:</label>
+                        <select name="visit_type" id="edit-visitType">
+                            <option value="first">First Visit</option>
+                            <option value="return">Return Patient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-notes">Notes:</label>
+                        <textarea name="notes" id="edit-notes"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" name="appointment_id" id="edit-appointment-id">
+                <input type="hidden" id="edit-status" name="status" value="Pending">
+
+                <button type="submit" class="btn btn-primary">Update Appointment</button>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

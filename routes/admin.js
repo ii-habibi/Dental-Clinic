@@ -11,8 +11,20 @@ router.get('/', (req, res) => {
 // Route to fetch dashboard data
 router.get('/data', async (req, res) => {
     try {
-        const totalPatientsResult = await pool.query('SELECT COUNT(*) AS total FROM patients');
-        const totalPatients = totalPatientsResult.rows[0].total;
+        const totalPatientsResult = await pool.query(`
+        SELECT
+    COUNT(DISTINCT p.patient_id) AS patients_this_month,
+    (SELECT COUNT(*) FROM patients) AS total_patients,
+    (SELECT COUNT(*) FROM appointment WHERE status = 'Completed') AS total_appointments
+FROM
+    appointment a
+INNER JOIN patients p ON a.patient_id = p.patient_id
+WHERE
+    DATE_TRUNC('month', a.appointment_date) = DATE_TRUNC('month', CURRENT_DATE)
+GROUP BY
+    DATE_TRUNC('month', a.appointment_date);`);
+        const totalPatients = totalPatientsResult.rows[0];
+       
 
         const returningPatientsResult = await pool.query("SELECT COUNT(*) AS total FROM appointment WHERE visit_type != 'first'");
         const returningPatients = returningPatientsResult.rows[0].total;
@@ -48,6 +60,7 @@ router.get('/data', async (req, res) => {
         const pendingAppointmentResult = await pool.query(`SELECT
     a.appointment_id,
     p.name AS patient_name,
+    a.treatment_type,
     a.appointment_date
 FROM
     appointment a
@@ -55,7 +68,7 @@ INNER JOIN patients p ON a.patient_id = p.patient_id
 WHERE
     a.status = 'Pending';`)
 
-    const pendingAppointment = pendingAppointmentResult.rows
+        const pendingAppointment = pendingAppointmentResult.rows
 
         // Prepare data response
         res.json({

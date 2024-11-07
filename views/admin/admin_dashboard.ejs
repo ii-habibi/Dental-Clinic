@@ -35,6 +35,7 @@
                 <thead>
                     <tr>
                         <th>Patient Name</th>
+                        <th>Treatment Type</th>
                         <th>Appointment Date</th>
                     </tr>
                 </thead>
@@ -49,6 +50,8 @@
             <h2>Dashboard Stats</h2>
             <p>Total Patients: <span id="total-patients">Loading...</span></p>
             <p>Total Returning Patients: <span id="returning-patients">Loading...</span></p>
+            <p>Patients This Month: <span id="patients-this-month">Loading...</span></p>
+            <p>Total Completed Appointments: <span id="total-appointments">Loading...</span></p>
         </div>
 
         <!-- Upcoming Appointments Section -->
@@ -85,7 +88,10 @@
                     url: '/dashboard/data',
                     method: 'GET',
                     success: function (data) {
-                        $('#total-patients').text(data.totalPatients);
+                        let totalPatientsAppoint = data.totalPatients;
+                        $('#total-patients').text(totalPatientsAppoint.total_patients);
+                        $('#patients-this-month').text(totalPatientsAppoint.patients_this_month)
+                        $('#total-appointments').text(totalPatientsAppoint.total_appointments)
                         $('#returning-patients').text(data.returningPatients);
 
                         let appointmentsHtml = '';
@@ -107,6 +113,7 @@
                             pendingAppointmentsHtml += `
                                 <tr>
                                     <td>${appointment.patient_name}</td>
+                                    <td>${appointment.treatment_type}</td>
                                     <td>${new Date(appointment.appointment_date).toLocaleDateString('en-US')}</td>
                                 </tr>
                             `;

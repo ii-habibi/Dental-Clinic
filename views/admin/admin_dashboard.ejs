@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,17 +17,24 @@
         }
     </style>
 </head>
+
 <body>
-    
+
+    <h1>Welcome to Admin Dashboard</h1>
     <div>
-        <h1>Welcome to Admin Dashboard</h1>
+        <a href="/dashboard/services">Manage Services</a>
+        <a href="/dashboard/blogs">Manage Blogs</a>
+        <a href="/dashboard/doctor">Doctors</a>
+        <a href="/dashboard/appointments">Appointments</a>
+        <a href="/dashboard/patients">Patients</a>
         <div>
-            <a href="/dashboard/services">Manage Services</a>
-            <a href="/dashboard/blogs">Manage Blogs</a>
-            <a href="/dashboard/doctor">Doctors</a>
-            <a href="/dashboard/appointments">Appointments</a>
-            <a href="/dashboard/patients">Patients</a>
+            <a href="/logout">Logout</a>
+            <a href="/dashboard/admin">Admin</a>
+
         </div>
+
+    </div>
+    <div>
 
         <!-- Pending Appointment Requests -->
         <div>
@@ -76,7 +84,7 @@
         <!-- Graph of Completed Appointments by Month -->
         <div>
             <h2>Completed Appointments by Month</h2>
-            <canvas id="appointments-bar-chart" ></canvas>
+            <canvas id="appointments-bar-chart"></canvas>
         </div>
     </div>
 
@@ -182,7 +190,40 @@
 
             // Initialize dashboard data fetch
             fetchDashboardData();
+
+            
+                // Handle form submission via AJAX
+                $('#registerForm').submit(function (event) {
+                    event.preventDefault();  // Prevent the form from submitting the traditional way
+
+                    // Get form data
+                    var formData = {
+                        username: $('#username').val(),
+                        password: $('#password').val()
+                    };
+
+                    // Send AJAX request to the server
+                    $.ajax({
+                        url: '/register',  // Server endpoint
+                        type: 'POST',      // Request method
+                        data: formData,    // Data to be sent
+                        success: function (response) {
+                            // Handle success response from the server
+                            $('#message').text(response).css('color', 'green');
+                            // Clear the form fields
+                            $('#username').val('');
+                            $('#password').val('');
+                        },
+                        error: function (error) {
+                            // Handle error response
+                            $('#message').text('An error occurred. Please try again.').css('color', 'red');
+                        }
+                    });
+                });
+        
+
         });
     </script>
 </body>
+
 </html>

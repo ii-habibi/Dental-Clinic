@@ -5,6 +5,8 @@ const flash = require('connect-flash');
 const path = require('path');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
+
 
 
 
@@ -21,17 +23,19 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Session setup for flash messages
 app.use(session({
-    secret: 'your-secret-key',
+    secret: 'TOPSECRET',
     resave: false,
     saveUninitialized: true,
 }));
 
 app.use(flash());
 
+
 // Routes
 app.use('/dashboard', adminRoutes);//admin
 app.use('/', userRoutes); //user
 
+app.use(authRoutes); // Add this to use auth routes
 
 // Handle 404 errors
 app.use((req, res) => {

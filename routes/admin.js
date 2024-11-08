@@ -1,12 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../models/db');
+const { ensureSuperAdmin, isAuthenticated } = require('../middleware/auth');
 
+// Protect all admin routes
+router.use(isAuthenticated);
 
 // Route to Dashboard
 router.get('/', (req, res) => {
     res.render('admin/admin_dashboard');
 });
+
+
+// Admin Route
+router.get('/admin', ensureSuperAdmin, (req, res) => res.render('admin/superadmin'));
+
 
 // Route to fetch dashboard data
 router.get('/data', async (req, res) => {
@@ -24,7 +32,7 @@ WHERE
 GROUP BY
     DATE_TRUNC('month', a.appointment_date);`);
         const totalPatients = totalPatientsResult.rows[0];
-       
+
 
         const returningPatientsResult = await pool.query("SELECT COUNT(*) AS total FROM appointment WHERE visit_type != 'first'");
         const returningPatients = returningPatientsResult.rows[0].total;

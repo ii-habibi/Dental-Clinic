@@ -104,7 +104,7 @@ router.get('/book', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const { patient_name, patient_gender, patient_age, patient_email, patient_phone, doctor_id, appointment_date, appointment_time, treatment_type, notes, visit_type } = req.body;
-
+ console.log(req.body)
     try {
         let patientResult;
         let patientId;

@@ -46,7 +46,7 @@ app.use(authRoutes); // Authentication routes
 
 // Handle 404 errors
 app.use((req, res) => {
-    res.status(404).send('Page Not Found');
+    res.status(404).render('errors/error404');
 });
 
 // General error handling middleware
@@ -70,7 +70,7 @@ app.use((err, req, res, next) => {
 
 // Catch 404 errors
 app.use((req, res, next) => {
-    res.status(404).render('error', { message: 'Page Not Found' });
+    res.status(404).render('errors/error', { message: 'Page Not Founded' });
 });
 
 // Start the server

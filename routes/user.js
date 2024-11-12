@@ -30,4 +30,56 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.post('/appointments', async (req, res) => {
+    const { patient_name, patient_gender, patient_age, patient_email, patient_phone, doctor_id, appointment_date, appointment_time, treatment_type, notes, visit_type } = req.body;
+
+    try {
+        let patientResult;
+        let patientId;
+
+        // Check if the patient exists based on provided email or phone
+        if (patient_email) {
+            patientResult = await pool.query('SELECT * FROM patients WHERE email = $1', [patient_email]);
+        } else if (patient_phone) {
+            patientResult = await pool.query('SELECT * FROM patients WHERE phone = $1', [patient_phone]);
+        }
+
+        if (patientResult && patientResult.rows.length > 0) {
+            // Patient with matching email or phone exists
+            patientId = patientResult.rows[0].patient_id;
+
+            // If it's a first-time visit, prompt the user to select "Return Visit"
+            if (visit_type === 'first') {
+                return res.status(400).json({ message: 'This email or phone is already associated with a patient. Select "Return Visit" instead.' });
+            }
+        } else {
+            // New patient - insert data
+            const newPatient = await pool.query(
+                'INSERT INTO patients (name, gender, age, email, phone) VALUES ($1, $2, $3, $4, $5) RETURNING patient_id',
+                [patient_name, patient_gender, patient_age || null, patient_email, patient_phone]
+            );
+            patientId = newPatient.rows[0].patient_id;
+        }
+
+        // Insert the new appointment with reference to patient_id
+        await pool.query(
+            'INSERT INTO appointment (patient_id, doctor_id, appointment_date, appointment_time, treatment_type, status, visit_type, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [patientId, doctor_id, appointment_date || new Date(), appointment_time || null, treatment_type, 'Pending', visit_type, notes]
+        );
+
+        // Respond with success message
+        res.status(201).json({ message: 'Appointment booked successfully' });
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+
+        // Check for specific error codes and handle accordingly
+        if (error.code === '23505') { // Unique constraint violation (e.g., duplicate email or phone)
+            res.status(400).json({ message: 'Duplicate entry detected. Patient data already exists.' });
+        } else {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+});
+
+
 module.exports = router;

@@ -3,12 +3,14 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
+const dotenv = require('dotenv');
+const helmet = require('helmet');
+
+dotenv.config();  // Load environment variables
+
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
-
-
-
 
 // Initialize app
 const app = express();
@@ -20,31 +22,55 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Security middlewares
+app.use(helmet());  // Secure HTTP headers
 
-// Session setup for flash messages
+// Session setup with improved security
 app.use(session({
-    secret: 'TOPSECRET',
+    secret: process.env.SESSION_SECRET || 'TOPSECRET',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',  // Ensure secure cookies in production
+        maxAge: 24 * 60 * 60 * 1000  // Session expires in 1 day
+    }
 }));
 
 app.use(flash());
 
-
 // Routes
-app.use('/dashboard', adminRoutes);//admin
-app.use('/', userRoutes); //user
-
-app.use(authRoutes); // Add this to use auth routes
+app.use('/dashboard', adminRoutes); // Admin routes
+app.use('/', userRoutes); // User routes
+app.use(authRoutes); // Authentication routes
 
 // Handle 404 errors
 app.use((req, res) => {
     res.status(404).send('Page Not Found');
 });
 
+// General error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the error stack for debugging
 
-app.get('/', (req, res) => {
-    res.send('Server is running');
+    // Determine the status code
+    const statusCode = err.status || (err.code >= 400 && err.code < 500 ? 400 : 500);
+    
+    // Set the response status
+    res.status(statusCode);
+
+    // Respond with a JSON object for API requests
+    if (req.accepts('json')) {
+        return res.json({ status: statusCode, message: err.message || 'An error occurred' });
+    }
+
+    // Render a custom error page for web requests
+    res.render('error', { message: err.message || 'An error occurred' });
+});
+
+// Catch 404 errors
+app.use((req, res, next) => {
+    res.status(404).render('error', { message: 'Page Not Found' });
 });
 
 // Start the server

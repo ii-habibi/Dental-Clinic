@@ -1,6 +1,4 @@
-
 const pool = require('../models/db');
-
 
 function isAuthenticated(req, res, next) {
     if (req.session.userId) {
@@ -15,13 +13,13 @@ function ensureSuperAdmin(req, res, next) {
             console.error(err);
             return res.status(500).send("An error occurred");
         }
-        if (result.rows[0]?.is_super_admin) {
-            next();
-        } else {
-            res.status(403).send("Forbidden: Requires Super Admin access");
+
+        if (result.rows.length === 0 || !result.rows[0].is_super_admin) {
+            return res.status(403).send("Forbidden: Requires Super Admin access");
         }
+        
+        next();
     });
 }
 
-
-module.exports = {isAuthenticated, ensureSuperAdmin};
+module.exports = { isAuthenticated, ensureSuperAdmin };

@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Super Admin Dashboard</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/jquery-3.6.0.min.js"></script>
+  <script src="/js/superAdmin.js"></script>
 </head>
 <body>
 
   <h1>Super Admin Dashboard</h1>
+
+  <!-- Greeting Message -->
+  <div >
+    <h2>Hello, <%= name %>!</h2>
+    <h3>Username: <%= username %></h3>
+  </div>
 
   <!-- Admins List -->
   <div>
@@ -19,12 +26,17 @@
   <div>
     <h2>Add New Admin</h2>
     <form id="addAdminForm">
-        <label>Name:</label>
-        <input type="text" id="newAdminName" required>
+      <label>Name:</label>
+      <input type="text" id="newAdminName" required>
       <label>Username:</label>
       <input type="text" id="newAdminUsername" required>
       <label>Password:</label>
       <input type="password" id="newAdminPassword" required>
+      <label>Is Super Admin:</label>
+      <select id="isSuperAdmin" required>
+        <option value="false">No</option>
+        <option value="true">Yes</option>
+      </select>
       <button type="submit">Add Admin</button>
     </form>
   </div>
@@ -33,6 +45,8 @@
   <div>
     <h2>Update Your Credentials</h2>
     <form id="updateSuperAdminForm">
+      <label>Current Password:</label>
+      <input type="password" id="currentPassword" required>
       <label>New Username:</label>
       <input type="text" id="updateUsername" required>
       <label>New Password:</label>
@@ -41,98 +55,5 @@
     </form>
   </div>
 
-  <script>
-    $(document).ready(function() {
-  // 1. Fetch and display all admins
-  function fetchAdmins() {
-    $.ajax({
-      url: '/admins',
-      type: 'GET',
-      success: function(data) {
-        $('#adminsList').empty();
-        data.forEach(admin => {
-          $('#adminsList').append(`
-            <li>
-                ${admin.name}  ${admin.username} 
-              <button class="deleteAdminBtn" data-id="${admin.id}">Delete</button>
-            </li>
-          `);
-        });
-      },
-      error: function() {
-        alert('Failed to fetch admins.');
-      }
-    });
-  }
-  fetchAdmins();
-
-  // 2. Add a new admin
-  $('#addAdminForm').on('submit', function(e) {
-    e.preventDefault();
-    const name = $('#newAdminName').val();
-    const username = $('#newAdminUsername').val();
-    const password = $('#newAdminPassword').val();
-
-    $.ajax({
-      url: '/add-admin',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({ name, username, password }),
-      success: function(message) {
-        alert(message);
-        $('#newAdminName').val();
-        $('#newAdminUsername').val('');
-        $('#newAdminPassword').val('');
-        fetchAdmins();
-      },
-      error: function() {
-        alert('Failed to add admin.');
-      }
-    });
-  });
-
-  // 3. Delete an admin
-  $('#adminsList').on('click', '.deleteAdminBtn', function() {
-    const adminId = $(this).data('id');
-
-    $.ajax({
-      url: '/delete-admin',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({ adminId }),
-      success: function(message) {
-        alert(message);
-        fetchAdmins();
-      },
-      error: function() {
-        alert('Failed to delete admin.');
-      }
-    });
-  });
-
-  // 4. Update Super Admin credentials
-  $('#updateSuperAdminForm').on('submit', function(e) {
-    e.preventDefault();
-    const username = $('#updateUsername').val();
-    const newPassword = $('#updatePassword').val();
-
-    $.ajax({
-      url: '/update-super-admin',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({ username, newPassword }),
-      success: function(message) {
-        alert(message);
-        $('#updateUsername').val('');
-        $('#updatePassword').val('');
-      },
-      error: function() {
-        alert('Failed to update credentials.');
-      }
-    });
-  });
-});
-
-  </script>
 </body>
 </html>

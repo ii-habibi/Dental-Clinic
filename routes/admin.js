@@ -8,12 +8,12 @@ router.use(isAuthenticated);
 
 // Route to Dashboard
 router.get('/', (req, res) => {
-    res.render('admin/admin_dashboard');
+    res.render('admin/admin_dashboard', {name: req.session.name});
 });
 
 
 // Admin Route
-router.get('/admin', ensureSuperAdmin, (req, res) => res.render('admin/superadmin'));
+router.get('/admin', ensureSuperAdmin, (req, res) => res.render('admin/superadmin', { name: req.session.name, username: req.session.username }));
 
 
 // Route to fetch dashboard data

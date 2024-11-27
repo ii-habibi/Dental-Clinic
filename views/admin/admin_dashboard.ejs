@@ -1,94 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <title>Admin Dashboard - Dental Clinic CMS</title>
+    <link rel="stylesheet" href="/css/admin_styles.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/adminDashboard.js"></script>
     <script src="/js/chart.js"></script>
-    <style>
-        #appointments-bar-chart {
-            max-width: 600px;
-            max-height: 400px;
-            width: 100%;
-            height: auto;
-        }
-    </style>
 </head>
-
 <body>
+    <div class="dashboard-container">
+        <button class="sidebar-toggle">☰</button>
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Dental Clinic CMS</h2>
+                <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/dashboard" class="active"><i class="icon-dashboard"></i>Dashboard</a></li>
+                <li><a href="/dashboard/services"><i class="icon-services"></i>Manage Services</a></li>
+                <li><a href="/dashboard/blogs"><i class="icon-blog"></i>Manage Blogs</a></li>
+                <li><a href="/dashboard/doctor"><i class="icon-doctor"></i>Doctors</a></li>
+                <li><a href="/dashboard/appointments"><i class="icon-calendar"></i>Appointments</a></li>
+                <li><a href="/dashboard/patients"><i class="icon-patients"></i>Patients</a></li>
+                <li><a href="/dashboard/admin"><i class="icon-admin"></i>Admin</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="/logout" class="logout-btn"><i class="icon-logout"></i>Logout</a>
+            </div>
+        </nav>
 
-    <h1>Welcome to Admin Dashboard <%= name %></h1>
-    <div>
-        <a href="/dashboard/services">Manage Services</a>
-        <a href="/dashboard/blogs">Manage Blogs</a>
-        <a href="/dashboard/doctor">Doctors</a>
-        <a href="/dashboard/appointments">Appointments</a>
-        <a href="/dashboard/patients">Patients</a>
-        <div>
-            <a href="/logout">Logout</a>
-            <a href="/dashboard/admin">Admin</a>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Welcome, <%= name %></h1>
+                <div class="user-info">
+                    <img src="/images/user-avatar.png" alt="User Avatar" class="user-avatar">
+                    <span class="user-name"><%= name %></span>
+                </div>
+            </header>
 
-        </div>
+            <div class="dashboard-grid">
+                <section class="dashboard-card stats-card">
+                    <h2>Dashboard Stats</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h3>Total Patients</h3>
+                            <p id="total-patients">Loading...</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Returning Patients</h3>
+                            <p id="returning-patients">Loading...</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Patients This Month</h3>
+                            <p id="patients-this-month">Loading...</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Total Appointments</h3>
+                            <p id="total-appointments">Loading...</p>
+                        </div>
+                    </div>
+                </section>
 
+                <section class="dashboard-card">
+                    <h2>Pending Appointment Requests</h2>
+                    <div class="table-responsive">
+                        <table id="pending-appointments-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Treatment Type</th>
+                                    <th>Appointment Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Pending appointments will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="dashboard-card">
+                    <h2>Upcoming Appointments</h2>
+                    <div class="table-responsive">
+                        <table id="appointments-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Appointment Date</th>
+                                    <th>Treatment Type</th>
+                                    <th>Doctor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Upcoming appointments will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="dashboard-card">
+                    <h2>Completed Appointments by Month</h2>
+                    <div class="chart-container">
+                        <canvas id="appointments-bar-chart"></canvas>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
-    <div>
-
-        <!-- Pending Appointment Requests -->
-        <div>
-            <h2>Pending Appointment Requests</h2>
-            <table id="pending-appointments-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Treatment Type</th>
-                        <th>Appointment Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Pending appointments will be populated here -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Dashboard Statistics -->
-        <div>
-            <h2>Dashboard Stats</h2>
-            <p>Total Patients: <span id="total-patients">Loading...</span></p>
-            <p>Total Returning Patients: <span id="returning-patients">Loading...</span></p>
-            <p>Patients This Month: <span id="patients-this-month">Loading...</span></p>
-            <p>Total Completed Appointments: <span id="total-appointments">Loading...</span></p>
-        </div>
-
-        <!-- Upcoming Appointments Section -->
-        <div>
-            <h2>Upcoming Appointments</h2>
-            <table id="appointments-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Appointment Date</th>
-                        <th>Treatment Type</th>
-                        <th>Doctor</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Upcoming appointments will be populated here -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Graph of Completed Appointments by Month -->
-        <div>
-            <h2>Completed Appointments by Month</h2>
-            <canvas id="appointments-bar-chart"></canvas>
-        </div>
-    </div>
-
+    <!-- <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script> -->
 </body>
-
 </html>
+

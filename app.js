@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Security middlewares
-app.use(helmet());  // Secure HTTP headers
+// app.use(helmet());  // Secure HTTP headers
 
 // Session setup with improved security
 app.use(session({

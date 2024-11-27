@@ -3,94 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pageTitle %> - Dental Clinic Admin</title>
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <title>Manage Services - Dental Clinic CMS</title>
+    <link rel="stylesheet" href="/css/admin_styles.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/services.js"></script>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="container">
-            <h1 class="admin-title">Dental Clinic Admin</h1>
-            <nav class="admin-nav">
-                <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/dashboard/services" class="nav-link">Manage Services</a>
-                <a href="/dashboard/services/add" class="nav-link">Add New Service</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="container">
-        <h2><%= pageTitle %></h2>
-
-        <% if (view === 'list') { %>
-            <a href="/dashboard/services/add" class="btn btn-primary">Add New Service</a>
-            <div class="table-responsive">
-                <table class="admin-table" id="service-list">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% services.forEach(service => { %>
-                            <tr id="service-<%= service.service_id %>">
-                                <td><%= service.name %></td>
-                                <td><%= service.description %></td>
-                                <td>$<%= service.price %></td>
-                                <td>
-                                    <a href="/dashboard/services/edit/<%= service.service_id %>" class="btn btn-edit">Edit</a>
-                                    <button class="btn btn-delete delete-button" data-id="<%= service.service_id %>">Delete</button>
-                                </td>
-                            </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+    <div class="dashboard-container">
+        <button class="sidebar-toggle">☰</button>
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Dental Clinic CMS</h2>
+                <button id="sidebarToggle" class="sidebar-toggle">☰</button>
             </div>
-        <% } %>
+            <ul class="sidebar-menu">
+                <li><a href="/dashboard"><i class="icon-dashboard"></i>Dashboard</a></li>
+                <li><a href="/dashboard/services" class="active"><i class="icon-services"></i>Manage Services</a></li>
+                <li><a href="/dashboard/blogs"><i class="icon-blog"></i>Manage Blogs</a></li>
+                <li><a href="/dashboard/doctor"><i class="icon-doctor"></i>Doctors</a></li>
+                <li><a href="/dashboard/appointments"><i class="icon-calendar"></i>Appointments</a></li>
+                <li><a href="/dashboard/patients"><i class="icon-patients"></i>Patients</a></li>
+                <li><a href="/dashboard/admin"><i class="icon-admin"></i>Admin</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="/logout" class="logout-btn"><i class="icon-logout"></i>Logout</a>
+            </div>
+        </nav>
 
-        <% if (view === 'add') { %>
-            <form action="/dashboard/services" method="POST" class="admin-form">
-                <div class="form-group">
-                    <label for="name">Service Name:</label>
-                    <input type="text" id="name" name="name" required>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Manage Services</h1>
+                <div class="user-info">
+                    <img src="/images/user-avatar.png" alt="User Avatar" class="user-avatar">
+                    <span class="user-name">Services</span>
                 </div>
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="price">Service Price:</label>
-                    <input type="number" id="price" name="price" required step="0.01">
-                </div>
-                <button type="submit" class="btn btn-primary">Add Service</button>
-            </form>
-            <a href="/dashboard/services" class="btn btn-secondary">Back to Services</a>
-        <% } %>
+            </header>
 
-        <% if (view === 'edit') { %>
-            <form id="editServiceForm" method="POST" class="admin-form">
-                <input type="hidden" id="serviceId" name="serviceId" value="<%= service.service_id %>">
-                <div class="form-group">
-                    <label for="serviceName">Service Name:</label>
-                    <input type="text" id="serviceName" name="name" value="<%= service.name %>" required>
-                </div>
-                <div class="form-group">
-                    <label for="serviceDescription">Description:</label>
-                    <textarea id="serviceDescription" name="description" required><%= service.description %></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="servicePrice">Service Price:</label>
-                    <input type="number" id="servicePrice" name="price" value="<%= service.price %>" required step="0.01">
-                </div>
-                <button type="submit" class="btn btn-primary">Update Service</button>
-            </form>
-            <a href="/dashboard/services" class="btn btn-secondary">Back to Services</a>
-        <% } %>
-    </main>
+            <div class="dashboard-grid">
+                <section class="dashboard-card services-list">
+                    <h2>Services List</h2>
+                    <button id="showAddServiceForm" class="btn btn-primary">Add New Service</button>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="service-list">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% services.forEach(service => { %>
+                                    <tr id="service-<%= service.service_id %>">
+                                        <td><%= service.name %></td>
+                                        <td><%= service.description %></td>
+                                        <td>$<%= service.price %></td>
+                                        <td>
+                                            <button class="btn btn-edit edit-button" data-id="<%= service.service_id %>">Edit</button>
+                                            <button class="btn btn-delete delete-button" data-id="<%= service.service_id %>">Delete</button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
+                <section id="addServiceSection" class="dashboard-card service-form" style="display: none;">
+                    <h2>Add New Service</h2>
+                    <form id="addServiceForm" class="admin-form">
+                        <div class="form-group">
+                            <label for="name">Service Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" name="description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Service Price:</label>
+                            <input type="number" id="price" name="price" required step="0.01" min="0">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Add Service</button>
+                            <button type="button" id="cancelAddService" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section id="editServiceSection" class="dashboard-card service-form" style="display: none;">
+                    <h2>Edit Service</h2>
+                    <form id="editServiceForm" class="admin-form">
+                        <input type="hidden" id="editServiceId" name="serviceId">
+                        <div class="form-group">
+                            <label for="editServiceName">Service Name:</label>
+                            <input type="text" id="editServiceName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editServiceDescription">Description:</label>
+                            <textarea id="editServiceDescription" name="description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editServicePrice">Service Price:</label>
+                            <input type="number" id="editServicePrice" name="price" required step="0.01" min="0">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Update Service</button>
+                            <button type="button" id="cancelEditService" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+    <!-- <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script> -->
 </body>
 </html>
+

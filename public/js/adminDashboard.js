@@ -1,65 +1,71 @@
 $(document).ready(function () {
-    // Fetch total patients, returning patients, and upcoming appointments data
     function fetchDashboardData() {
         $.ajax({
             url: '/dashboard/data',
             method: 'GET',
             success: function (data) {
-                let totalPatientsAppoint = data.totalPatients;
-                $('#total-patients').text(totalPatientsAppoint.total_patients);
-                $('#patients-this-month').text(totalPatientsAppoint.patients_this_month)
-                $('#total-appointments').text(totalPatientsAppoint.total_appointments)
-                $('#returning-patients').text(data.returningPatients);
-
-                let appointmentsHtml = '';
-                data.upcomingAppointments.forEach(function (appointment) {
-                    appointmentsHtml += `
-                        <tr>
-                            <td>${appointment.patient_name}</td>
-                            <td>${new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
-                            <td>${appointment.treatment_type}</td>
-                            <td>${appointment.doctor_name}</td>
-                            <td>${appointment.status}</td>
-                        </tr>
-                    `;
-                });
-                $('#appointments-table tbody').html(appointmentsHtml);
-
-                let pendingAppointmentsHtml = '';
-                data.pendingAppointment.forEach(function (appointment) {
-                    pendingAppointmentsHtml += `
-                        <tr>
-                            <td>${appointment.patient_name}</td>
-                            <td>${appointment.treatment_type}</td>
-                            <td>${new Date(appointment.appointment_date).toLocaleDateString('en-US')}</td>
-                        </tr>
-                    `;
-                });
-                $('#pending-appointments-table tbody').html(pendingAppointmentsHtml);
-
-                // Display updated appointments graph
+                updateDashboardStats(data.totalPatients);
+                updateAppointmentsTables(data.upcomingAppointments, data.pendingAppointment);
                 displayAppointmentsGraph(data.completedAppointmentsByMonth);
+            },
+            error: function (error) {
+                console.error('Error fetching dashboard data:', error);
             }
         });
     }
 
-    // Display Completed Appointments Graph using Chart.js
+    function updateDashboardStats(stats) {
+        $('#total-patients').text(stats.total_patients);
+        $('#patients-this-month').text(stats.patients_this_month);
+        $('#total-appointments').text(stats.total_appointments);
+        $('#returning-patients').text(stats.returning_patients);
+    }
+
+    function updateAppointmentsTables(upcomingAppointments, pendingAppointments) {
+        let upcomingHtml = '';
+        upcomingAppointments.forEach(function (appointment) {
+            upcomingHtml += `
+                <tr>
+                    <td>${appointment.patient_name}</td>
+                    <td>${formatDate(appointment.appointment_date)}</td>
+                    <td>${appointment.treatment_type}</td>
+                    <td>${appointment.doctor_name}</td>
+                    <td>${appointment.status}</td>
+                </tr>
+            `;
+        });
+        $('#appointments-table tbody').html(upcomingHtml);
+
+        let pendingHtml = '';
+        pendingAppointments.forEach(function (appointment) {
+            pendingHtml += `
+                <tr>
+                    <td>${appointment.patient_name}</td>
+                    <td>${appointment.treatment_type}</td>
+                    <td>${formatDate(appointment.appointment_date)}</td>
+                </tr>
+            `;
+        });
+        $('#pending-appointments-table tbody').html(pendingHtml);
+    }
+
     function displayAppointmentsGraph(appointmentsByMonth) {
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const ctx = $('#appointments-bar-chart');
         const chartData = {
-            labels: appointmentsByMonth.months.map(month => monthNames[month - 1]), // Map month numbers to month names
+            labels: appointmentsByMonth.months.map(month => monthNames[month - 1]),
             datasets: [{
                 label: 'Completed Appointments',
                 data: appointmentsByMonth.completedCounts,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)', // Lighter color for better visualization
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(41, 128, 185, 0.6)',
+                borderColor: 'rgba(41, 128, 185, 1)',
                 borderWidth: 1
             }]
         };
 
         const options = {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -97,38 +103,31 @@ $(document).ready(function () {
         });
     }
 
-    // Initialize dashboard data fetch
+    function formatDate(dateString) {
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options);
+    }
+
     fetchDashboardData();
 
-    
-        // Handle form submission via AJAX
-        $('#registerForm').submit(function (event) {
-            event.preventDefault();  // Prevent the form from submitting the traditional way
+    // Refresh dashboard data every 5 minutes
+    setInterval(fetchDashboardData, 300000);
 
-            // Get form data
-            var formData = {
-                username: $('#username').val(),
-                password: $('#password').val()
-            };
+    // Sidebar toggle functionality
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
 
-            // Send AJAX request to the server
-            $.ajax({
-                url: '/register',  // Server endpoint
-                type: 'POST',      // Request method
-                data: formData,    // Data to be sent
-                success: function (response) {
-                    // Handle success response from the server
-                    $('#message').text(response).css('color', 'green');
-                    // Clear the form fields
-                    $('#username').val('');
-                    $('#password').val('');
-                },
-                error: function (error) {
-                    // Handle error response
-                    $('#message').text('An error occurred. Please try again.').css('color', 'red');
-                }
-            });
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
         });
+    }
 
-
+    // Close sidebar when clicking outside of it
+    document.addEventListener('click', function(event) {
+        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
 });
+

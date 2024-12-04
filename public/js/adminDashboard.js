@@ -1,14 +1,27 @@
 $(document).ready(function () {
+    // Sidebar toggle functionality
+    $('#sidebar-toggle').click(function() {
+        $('.sidebar').toggleClass('active');
+    });
+
+    // Close sidebar when clicking outside of it
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.sidebar, #sidebar-toggle').length) {
+            $('.sidebar').removeClass('active');
+        }
+    });
+
     // Fetch total patients, returning patients, and upcoming appointments data
     function fetchDashboardData() {
         $.ajax({
             url: '/dashboard/data',
             method: 'GET',
             success: function (data) {
+                console.log(data);
                 let totalPatientsAppoint = data.totalPatients;
                 $('#total-patients').text(totalPatientsAppoint.total_patients);
-                $('#patients-this-month').text(totalPatientsAppoint.patients_this_month)
-                $('#total-appointments').text(totalPatientsAppoint.total_appointments)
+                $('#patients-this-month').text(totalPatientsAppoint.patients_this_month);
+                $('#total-appointments').text(totalPatientsAppoint.total_appointments);
                 $('#returning-patients').text(data.returningPatients);
 
                 let appointmentsHtml = '';
@@ -48,18 +61,19 @@ $(document).ready(function () {
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const ctx = $('#appointments-bar-chart');
         const chartData = {
-            labels: appointmentsByMonth.months.map(month => monthNames[month - 1]), // Map month numbers to month names
+            labels: appointmentsByMonth.months.map(month => monthNames[month - 1]),
             datasets: [{
                 label: 'Completed Appointments',
                 data: appointmentsByMonth.completedCounts,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)', // Lighter color for better visualization
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(30, 136, 229, 0.6)',
+                borderColor: 'rgba(30, 136, 229, 1)',
                 borderWidth: 1
             }]
         };
 
         const options = {
-            responsive: true,
+            responsive: false,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -100,35 +114,10 @@ $(document).ready(function () {
     // Initialize dashboard data fetch
     fetchDashboardData();
 
-    
-        // Handle form submission via AJAX
-        $('#registerForm').submit(function (event) {
-            event.preventDefault();  // Prevent the form from submitting the traditional way
-
-            // Get form data
-            var formData = {
-                username: $('#username').val(),
-                password: $('#password').val()
-            };
-
-            // Send AJAX request to the server
-            $.ajax({
-                url: '/register',  // Server endpoint
-                type: 'POST',      // Request method
-                data: formData,    // Data to be sent
-                success: function (response) {
-                    // Handle success response from the server
-                    $('#message').text(response).css('color', 'green');
-                    // Clear the form fields
-                    $('#username').val('');
-                    $('#password').val('');
-                },
-                error: function (error) {
-                    // Handle error response
-                    $('#message').text('An error occurred. Please try again.').css('color', 'red');
-                }
-            });
-        });
-
-
+    // Responsive behavior for sidebar
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('.sidebar').removeClass('active');
+        }
+    });
 });

@@ -3,96 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= action === 'add' ? 'Add New Blog' : action === 'edit' ? 'Edit Blog' : 'Manage Blogs' %> - Dental Clinic Admin</title>
+    <title>DentalCare Admin - Blogs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/admin_routes.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/adminDashboard.js"></script>
     <script src="/js/blogs.js"></script>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="container">
-            <h1 class="admin-title">Dental Clinic Admin</h1>
-            <nav class="admin-nav">
-                <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/dashboard/blogs" class="nav-link">Manage Blogs</a>
-                <a href="/dashboard/blogs/add" class="nav-link">Add New Blog</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="container">
-        <% if (action === 'add') { %>
-            <h2>Add New Blog</h2>
-            <form action="/dashboard/blogs" method="POST" class="admin-form">
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" name="title" id="title" required>
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>Blog Management</h1>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
+                    <span class="user-name">User</span>
                 </div>
-                
-                <div class="form-group">
-                    <label for="content">Content</label>
-                    <textarea name="content" id="content" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="author">Author</label>
-                    <input type="text" name="author" id="author">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-
-        <% } else if (action === 'edit') { %>
-            <h2>Edit Blog</h2>
-            <form action="/dashboard/blogs/edit/<%= blog.blog_id %>" method="POST" class="admin-form">
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" name="title" id="title" value="<%= blog.title %>" required>
-                </div>
-        
-                <div class="form-group">
-                    <label for="content">Content</label>
-                    <textarea name="content" id="content" required><%= blog.content %></textarea>
-                </div>
-        
-                <div class="form-group">
-                    <label for="author">Author</label>
-                    <input type="text" name="author" id="author" value="<%= blog.author %>">
-                </div>
-        
-                <button type="submit" class="btn btn-primary">Update</button>
-            </form>
-
-        <% } else if (action === 'manage') { %>
-            <h2>Manage Blogs</h2>
-            <a href="/dashboard/blogs/add" class="btn btn-primary">Add New Blog</a>
-            <div class="table-responsive">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Published Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% blogs.forEach(blog => { %>
-                            <tr id="blog-<%= blog.blog_id %>">
-                                <td><%= blog.title %></td>
-                                <td><%= blog.author %></td>
-                                <td><%= blog.published_date %></td>
-                                <td>
-                                    <a href="/dashboard/blogs/edit/<%= blog.blog_id %>" class="btn btn-edit">Edit</a>
-                                    <button class="btn btn-delete delete-button" data-id="<%= blog.blog_id %>">Delete</button>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
             </div>
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-tooth"></i>
+                <h2>DentalCare</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/dashboard/services"><i class="fas fa-concierge-bell"></i> Services</a>
+                <a href="/dashboard/blogs" class="active"><i class="fas fa-blog"></i> Blogs</a>
+                <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
+                <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
+                <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
+                <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="dashboard-card">
+                <% if (action === 'add') { %>
+                    <h2>Add New Blog</h2>
+                    <form action="/dashboard/blogs" method="POST" class="admin-form">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" name="title" id="title" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content">Content</label>
+                            <textarea name="content" id="content" required></textarea>
+                        </div>
 
-        <% } %>
-    </main>
+                        <div class="form-group">
+                            <label for="author">Author</label>
+                            <input type="text" name="author" id="author">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+
+                <% } else if (action === 'edit') { %>
+                    <h2>Edit Blog</h2>
+                    <form action="/dashboard/blogs/edit/<%= blog.blog_id %>" method="POST" class="admin-form">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" name="title" id="title" value="<%= blog.title %>" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="content">Content</label>
+                            <textarea name="content" id="content" required><%= blog.content %></textarea>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="author">Author</label>
+                            <input type="text" name="author" id="author" value="<%= blog.author %>">
+                        </div>
+                
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+
+                <% } else if (action === 'manage') { %>
+                    <h2>Manage Blogs</h2>
+                    <a href="/dashboard/blogs/add" class="btn btn-primary">Add New Blog</a>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Published Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% blogs.forEach(blog => { %>
+                                    <tr id="blog-<%= blog.blog_id %>">
+                                        <td><%= blog.title %></td>
+                                        <td><%= blog.author %></td>
+                                        <td><%= blog.published_date %></td>
+                                        <td>
+                                            <a href="/dashboard/blogs/edit/<%= blog.blog_id %>" class="btn btn-edit">Edit</a>
+                                            <button class="btn btn-delete delete-button" data-id="<%= blog.blog_id %>">Delete</button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                <% } %>
+            </div>
+        </main>
+    </div>
 </body>
 </html>

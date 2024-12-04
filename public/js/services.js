@@ -1,4 +1,17 @@
 $(document).ready(function() {
+       // Sidebar toggle functionality
+    $('#sidebar-toggle').click(function() {
+        $('.sidebar').toggleClass('active');
+    });
+
+    // Close sidebar when clicking outside of it
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.sidebar, #sidebar-toggle').length) {
+            $('.sidebar').removeClass('active');
+        }
+    });
+
+    // Delete service functionality
     $('.delete-button').click(function() {
         const serviceId = $(this).data('id');
         const row = $('#service-' + serviceId);
@@ -20,6 +33,7 @@ $(document).ready(function() {
         }
     });
 
+    // Edit service functionality
     $('#editServiceForm').on('submit', function(event) {
         event.preventDefault();
 
@@ -47,5 +61,12 @@ $(document).ready(function() {
                 alert('Error updating service: ' + xhr.responseText);
             }
         });
+    });
+
+    // Responsive behavior for sidebar
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('.sidebar').removeClass('active');
+        }
     });
 });

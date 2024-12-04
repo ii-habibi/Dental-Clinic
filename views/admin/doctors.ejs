@@ -3,93 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pageTitle %></title>
+    <title>DentalCare Admin - Doctors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/admin_routes.css">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/adminDashboard.js"></script>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="container">
-            <h1 class="admin-title">Dental Clinic Admin</h1>
-            <nav class="admin-nav">
-                <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/dashboard/doctor" class="nav-link">Doctor Profiles</a>
-                <a href="/dashboard/doctor/add" class="nav-link">Add Doctor</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="container">
-        <% if (action === 'list') { %>
-            <h2>Doctor Profiles</h2>
-            <div class="doctor-grid">
-                <% doctors.forEach(doctor => { %>
-                    <div class="doctor-card">
-                        <img src="<%= doctor.photo %>" alt="<%= doctor.name %>" class="doctor-image">
-                        <h3><%= doctor.name %></h3>
-                        <p><strong>Qualification:</strong> <%= doctor.qualification %></p>
-                        <p><strong>Expertise:</strong> <%= doctor.expertise %></p>
-                        <div class="doctor-actions">
-                            <a href="/dashboard/doctor/edit/<%= doctor.id %>" class="btn btn-edit">Edit</a>
-                            <form action="/dashboard/doctor/delete/<%= doctor.id %>" method="POST">
-                                <button type="submit" class="btn btn-delete">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-                <% }) %>
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>Doctor Management</h1>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
+                    <span class="user-name">User</span>
+                </div>
             </div>
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-tooth"></i>
+                <h2>DentalCare</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/dashboard/services"><i class="fas fa-concierge-bell"></i> Services</a>
+                <a href="/dashboard/blogs"><i class="fas fa-blog"></i> Blogs</a>
+                <a href="/dashboard/doctor" class="active"><i class="fas fa-user-md"></i> Doctors</a>
+                <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
+                <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
+                <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="dashboard-card">
+                <% if (action === 'list') { %>
+                    <h2>Doctor Profiles</h2>
+                    <a href="/dashboard/doctor/add" class="btn btn-primary">Add New Doctor</a>
+                    <div class="doctor-grid">
+                        <% doctors.forEach(doctor => { %>
+                            <div class="doctor-card">
+                                <img src="<%= doctor.photo %>" alt="<%= doctor.name %>" class="doctor-image">
+                                <h3><%= doctor.name %></h3>
+                                <p><strong>Qualification:</strong> <%= doctor.qualification %></p>
+                                <p><strong>Expertise:</strong> <%= doctor.expertise %></p>
+                                <div class="doctor-actions">
+                                    <a href="/dashboard/doctor/edit/<%= doctor.id %>" class="btn btn-edit">Edit</a>
+                                    <form action="/dashboard/doctor/delete/<%= doctor.id %>" method="POST">
+                                        <button type="submit" class="btn btn-delete">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
 
-        <% } else if (action === 'edit') { %>
-            <h2>Edit Doctor Profile</h2>
-            <form action="/dashboard/doctor/edit/<%= doctor.id %>" method="POST" enctype="multipart/form-data" class="admin-form">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" value="<%= doctor.name %>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="qualification">Qualification:</label>
-                    <input type="text" id="qualification" name="qualification" value="<%= doctor.qualification %>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="expertise">Areas of Expertise:</label>
-                    <input type="text" id="expertise" name="expertise" value="<%= doctor.expertise %>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="image">Profile Picture:</label>
-                    <input type="file" id="image" name="image">
-                </div>
+                <% } else if (action === 'edit') { %>
+                    <h2>Edit Doctor Profile</h2>
+                    <form action="/dashboard/doctor/edit/<%= doctor.id %>" method="POST" enctype="multipart/form-data" class="admin-form">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" value="<%= doctor.name %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="qualification">Qualification:</label>
+                            <input type="text" id="qualification" name="qualification" value="<%= doctor.qualification %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expertise">Areas of Expertise:</label>
+                            <input type="text" id="expertise" name="expertise" value="<%= doctor.expertise %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="image">Profile Picture:</label>
+                            <input type="file" id="image" name="image">
+                        </div>
 
-                <button type="submit" class="btn btn-primary">Update Doctor</button>
-            </form>
+                        <button type="submit" class="btn btn-primary">Update Doctor</button>
+                    </form>
 
-        <% } else if (action === 'add') { %>
-            <h2>Add Doctor Profile</h2>
-            <form action="/dashboard/doctor/add" method="POST" enctype="multipart/form-data" class="admin-form">
-                <div class="form-group">
-                    <label for="name">Doctor Name:</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
+                <% } else if (action === 'add') { %>
+                    <h2>Add Doctor Profile</h2>
+                    <form action="/dashboard/doctor/add" method="POST" enctype="multipart/form-data" class="admin-form">
+                        <div class="form-group">
+                            <label for="name">Doctor Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
 
-                <div class="form-group">
-                    <label for="qualification">Qualification:</label>
-                    <input type="text" id="qualification" name="qualification" required>
-                </div>
+                        <div class="form-group">
+                            <label for="qualification">Qualification:</label>
+                            <input type="text" id="qualification" name="qualification" required>
+                        </div>
 
-                <div class="form-group">
-                    <label for="expertise">Areas of Expertise:</label>
-                    <input type="text" id="expertise" name="expertise" required>
-                </div>
+                        <div class="form-group">
+                            <label for="expertise">Areas of Expertise:</label>
+                            <input type="text" id="expertise" name="expertise" required>
+                        </div>
 
-                <div class="form-group">
-                    <label for="image">Upload Profile Picture:</label>
-                    <input type="file" id="image" name="image" accept="image/*" required>
-                </div>
+                        <div class="form-group">
+                            <label for="image">Upload Profile Picture:</label>
+                            <input type="file" id="image" name="image" accept="image/*" required>
+                        </div>
 
-                <button type="submit" class="btn btn-primary">Add Doctor</button>
-            </form>
-        <% } %>
-    </main>
+                        <button type="submit" class="btn btn-primary">Add Doctor</button>
+                    </form>
+                <% } %>
+            </div>
+        </main>
+    </div>
 </body>
 </html>

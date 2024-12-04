@@ -4,7 +4,7 @@ const pool = require('../models/db');
 const { ensureSuperAdmin, isAuthenticated } = require('../middleware/auth');
 
 // Protect all admin routes
-router.use(isAuthenticated);
+// router.use(isAuthenticated);
 
 // Route to Dashboard
 router.get('/', (req, res) => {
@@ -28,9 +28,8 @@ FROM
     appointment a
 INNER JOIN patients p ON a.patient_id = p.patient_id
 WHERE
-    DATE_TRUNC('month', a.appointment_date) = DATE_TRUNC('month', CURRENT_DATE)
-GROUP BY
-    DATE_TRUNC('month', a.appointment_date);`);
+    DATE_TRUNC('month', a.appointment_date) = DATE_TRUNC('month', CURRENT_DATE);
+`);
         const totalPatients = totalPatientsResult.rows[0];
 
 

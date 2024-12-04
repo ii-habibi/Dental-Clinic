@@ -1,4 +1,16 @@
 $(document).ready(function () {
+    // Sidebar toggle functionality
+    $('#sidebar-toggle').click(function() {
+        $('.sidebar').toggleClass('active');
+    });
+
+    // Close sidebar when clicking outside of it
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.sidebar, #sidebar-toggle').length) {
+            $('.sidebar').removeClass('active');
+        }
+    });
+
     // Function to toggle appointment details
     function toggleDetails(id) {
         const $details = $('#' + id);
@@ -65,40 +77,42 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-toggle="editClose"]', function() {
-        closeModal(this)
-    })
-
-    $(document).ready(function () {
-        // Handle delete button click
-        $(document).on('click', '.delete-btn', function () {
-            const patientId = $(this).data('patient-id');
-
-            // Confirm if the user wants to delete both the patient and their appointments
-            const confirmDelete = confirm("Are you sure you want to delete this patient? All associated appointments will be deleted as well.");
-
-            if (confirmDelete) {
-                // Make AJAX request to delete the patient and their appointments
-                $.ajax({
-                    url: `/dashboard/patients/delete/${patientId}`,
-                    type: 'GET',
-                    success: function (response) {
-                        if (response.success) {
-                            // If successful, reload the page or update the UI
-                            alert("Patient and associated appointments deleted successfully.");
-                            location.reload(); // Reload the page to reflect the changes
-                        } else {
-                            alert("Error deleting patient and appointments.");
-                        }
-                    },
-                    error: function (error) {
-                        console.error("Error deleting patient and appointments:", error);
-                        alert("Error deleting patient and appointments.");
-                    }
-                });
-            }
-        });
+        closeModal();
     });
 
+    // Handle delete button click
+    $(document).on('click', '.delete-btn', function () {
+        const patientId = $(this).data('patient-id');
 
+        // Confirm if the user wants to delete both the patient and their appointments
+        const confirmDelete = confirm("Are you sure you want to delete this patient? All associated appointments will be deleted as well.");
 
+        if (confirmDelete) {
+            // Make AJAX request to delete the patient and their appointments
+            $.ajax({
+                url: `/dashboard/patients/delete/${patientId}`,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        // If successful, reload the page or update the UI
+                        alert("Patient and associated appointments deleted successfully.");
+                        location.reload(); // Reload the page to reflect the changes
+                    } else {
+                        alert("Error deleting patient and appointments.");
+                    }
+                },
+                error: function (error) {
+                    console.error("Error deleting patient and appointments:", error);
+                    alert("Error deleting patient and appointments.");
+                }
+            });
+        }
+    });
+
+    // Responsive behavior for sidebar
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('.sidebar').removeClass('active');
+        }
+    });
 });

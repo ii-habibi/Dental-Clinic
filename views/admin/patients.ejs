@@ -1,141 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Manage Patients</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DentalCare Admin - Patients</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin_routes.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/adminDashboard.js"></script>
     <script src="/js/patients.js"></script>
-    <style>
-        .appointment-details {
-            display: none;
-        }
-    </style>
 </head>
-
 <body>
-    <h1>Patient Management</h1>
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>Patient Management</h1>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
+                    <span class="user-name">User</span>
+                </div>
+            </div>
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-tooth"></i>
+                <h2>DentalCare</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/dashboard/services"><i class="fas fa-concierge-bell"></i> Services</a>
+                <a href="/dashboard/blogs"><i class="fas fa-blog"></i> Blogs</a>
+                <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
+                <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
+                <a href="/dashboard/patients" class="active"><i class="fas fa-users"></i> Patients</a>
+                <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="dashboard-card">
+                <h2>Patient Management</h2>
+                
+                <!-- Search Form -->
+                <form action="/dashboard/patients/search" method="GET" class="search-form">
+                    <input type="text" name="query" placeholder="Search by name, email, or phone">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
 
-    <!-- Search Form -->
-    <form action="/dashboard/patients/search" method="GET">
-        <input type="text" name="query" placeholder="Search by name, email, or phone">
-        <button type="submit">Search</button>
-    </form>
+                <!-- Add Patient Form -->
+                <h3>Add New Patient</h3>
+                <form action="/dashboard/patients/" method="POST" class="admin-form">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" name="age" placeholder="Age">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="gender" placeholder="Gender">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="phone" placeholder="Phone" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="address" placeholder="Address">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Patient</button>
+                </form>
 
-    <!-- Add Patient Form -->
-    <h2>Add New Patient</h2>
-    <form action="/dashboard/patients/" method="POST">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="number" name="age" placeholder="Age">
-        <input type="text" name="gender" placeholder="Gender">
-        <input type="email" name="email" placeholder="Email">
-        <input type="text" name="phone" placeholder="Phone" required>
-        <input type="text" name="address" placeholder="Address">
-        <button type="submit">Add Patient</button>
-    </form>
-
-    <!-- List of Patients -->
-    <h2>All Patients</h2>
-    <% if (patients.length> 0) { %>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Gender</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>Appointments</th>
-                <th>Actions</th>
-            </tr>
-            <% patients.forEach(patient=> { %>
-                <tr>
-                    <td>
-                        <%= patient.name %>
-                    </td>
-                    <td>
-                        <%= patient.age %>
-                    </td>
-                    <td>
-                        <%= patient.gender %>
-                    </td>
-                    <td>
-                        <%= patient.email %>
-                    </td>
-                    <td>
-                        <%= patient.phone %>
-                    </td>
-                    <td>
-                        <%= patient.address %>
-                    </td>
-                    <td>
-                        <%= patient.appointment_count %>
-                            <button data-toggle="details" data-patient-id="<%= patient.patient_id %>">View</button>
-
-                    </td>
-                    <td><button data-toggle="edit" data-patient='<%= JSON.stringify(patient) %>'>Edit</button>
-
-                        <button class="delete-btn" data-patient-id="<%= patient.patient_id %>">Delete</button>
-
-                    </td>
-
-                </tr>
-
-                <!-- Appointment details section -->
-                <tr id="appointments-<%= patient.patient_id %>" class="appointment-details">
-                    <td colspan="8">
-                        <h4>Appointment History</h4>
-                        <% if (Array.isArray(patient.appointments) && patient.appointments.length> 0) { %>
-                            <% patient.appointments.forEach(appointment=> { %>
-                                <div>
-                                    <p>Date: <%= appointment.appointment_date %>
-                                    </p>
-                                    <p>Time: <%= appointment.appointment_time %>
-                                    </p>
-                                    <p>Doctor: <%= appointment.doctor_name %>
-                                    </p>
-                                    <p>Treatment Type: <%= appointment.treatment_type %>
-                                    </p>
-                                    <p>Notes: <%= appointment.notes %>
-                                    </p>
-                                    <p>Status: <%= appointment.status %>
-                                    </p>
-                                </div>
-                                <hr>
+                <!-- List of Patients -->
+                <h3>All Patients</h3>
+                <% if (patients.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                    <th>Appointments</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% patients.forEach(patient => { %>
+                                    <tr>
+                                        <td><%= patient.name %></td>
+                                        <td><%= patient.age %></td>
+                                        <td><%= patient.gender %></td>
+                                        <td><%= patient.email %></td>
+                                        <td><%= patient.phone %></td>
+                                        <td><%= patient.address %></td>
+                                        <td>
+                                            <%= patient.appointment_count %>
+                                            <button class="btn btn-secondary" data-toggle="details" data-patient-id="<%= patient.patient_id %>">View</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-edit" data-toggle="edit" data-patient='<%= JSON.stringify(patient) %>'>Edit</button>
+                                            <button class="btn btn-delete delete-btn" data-patient-id="<%= patient.patient_id %>">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Appointment details section -->
+                                    <tr id="appointments-<%= patient.patient_id %>" class="appointment-details">
+                                        <td colspan="8">
+                                            <h4>Appointment History</h4>
+                                            <% if (Array.isArray(patient.appointments) && patient.appointments.length > 0) { %>
+                                                <% patient.appointments.forEach(appointment => { %>
+                                                    <div class="appointment-item">
+                                                        <p><strong>Date:</strong> <%= appointment.appointment_date %></p>
+                                                        <p><strong>Time:</strong> <%= appointment.appointment_time %></p>
+                                                        <p><strong>Doctor:</strong> <%= appointment.doctor_name %></p>
+                                                        <p><strong>Treatment Type:</strong> <%= appointment.treatment_type %></p>
+                                                        <p><strong>Notes:</strong> <%= appointment.notes %></p>
+                                                        <p><strong>Status:</strong> <%= appointment.status %></p>
+                                                    </div>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <p>No appointment history available for this patient.</p>
+                                            <% } %>
+                                        </td>
+                                    </tr>
                                 <% }) %>
-                                    <% } else { %>
-                                        <p>No appointment history available for this patient.</p>
-                                        <% } %>
-                    </td>
-                </tr>
-                <% }) %>
-        </table>
-        <% } else { %>
-            <p>No patients found for your search criteria.</p>
-            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <p>No patients found for your search criteria.</p>
+                <% } %>
 
                 <!-- Hidden Edit Form Modal -->
-                <div id="editModal" style="display: none;">
-                    <h2>Edit Patient</h2>
-                    <form id="editPatientForm">
-                        <input type="hidden" name="patient_id" id="edit_patient_id">
-                        <label>Name: </label>
-                        <input type="text" name="name" id="edit_name" required>
-                        <label>Age: </label>
-                        <input type="number" name="age" id="edit_age">
-                        <label>Gender: </label>
-                        <input type="text" name="gender" id="edit_gender">
-                        <label>Email: </label>
-                        <input type="email" name="email" id="edit_email">
-                        <label>Phone: </label>
-                        <input type="text" name="phone" id="edit_phone" required>
-                        <label>Address: </label>
-                        <input type="text" name="address" id="edit_address">
-                        <button type="submit">Save Changes</button>
-                        <button type="button" data-toggle="editClose">Cancel</button>
-                    </form>
+                <div id="editModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Edit Patient</h2>
+                        <form id="editPatientForm" class="admin-form">
+                            <input type="hidden" name="patient_id" id="edit_patient_id">
+                            <div class="form-group">
+                                <label for="edit_name">Name: </label>
+                                <input type="text" name="name" id="edit_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_age">Age: </label>
+                                <input type="number" name="age" id="edit_age">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_gender">Gender: </label>
+                                <input type="text" name="gender" id="edit_gender">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_email">Email: </label>
+                                <input type="email" name="email" id="edit_email">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_phone">Phone: </label>
+                                <input type="text" name="phone" id="edit_phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_address">Address: </label>
+                                <input type="text" name="address" id="edit_address">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" data-toggle="editClose">Cancel</button>
+                        </form>
+                    </div>
                 </div>
-
+            </div>
+        </main>
+    </div>
 </body>
-
 </html>

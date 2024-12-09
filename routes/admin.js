@@ -4,7 +4,7 @@ const pool = require('../models/db');
 const { ensureSuperAdmin, isAuthenticated } = require('../middleware/auth');
 
 // Protect all admin routes
-// router.use(isAuthenticated);
+router.use(isAuthenticated);
 
 // Route to Dashboard
 router.get('/', (req, res) => {
@@ -44,7 +44,7 @@ WHERE
             JOIN patients p ON a.patient_id = p.patient_id
             JOIN doctors d ON a.doctor_id = d.id
             WHERE a.appointment_date >= CURRENT_DATE
-              AND a.status != 'Completed'
+              AND a.status = 'Approved'
             ORDER BY a.appointment_date ASC
         `);
         const upcomingAppointments = upcomingAppointmentsResult.rows;

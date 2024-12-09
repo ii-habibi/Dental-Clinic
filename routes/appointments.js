@@ -128,7 +128,7 @@ router.post('/', async (req, res) => {
             // New patient - insert data
             const newPatient = await pool.query(
                 'INSERT INTO patients (name, gender, age, email, phone) VALUES ($1, $2, $3, $4, $5) RETURNING patient_id',
-                [patient_name, patient_gender, patient_age || null, patient_email, patient_phone]
+                [patient_name, patient_gender, patient_age || null, patient_email || null, patient_phone || null]
             );
             patientId = newPatient.rows[0].patient_id;
         }

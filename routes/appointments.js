@@ -251,30 +251,25 @@ router.delete('/delete/:id', async (req, res) => {
         const adminId = req.session.userId; 
         const oldAppointment = await getAppointmentById(appointmentId);
 
-        const result = await pool.query(`
-            SELECT patient_id, visit_type
-            FROM appointment
-            WHERE appointment_id = $1
-        `, [appointmentId]);
-
-        if (result.rowCount > 0) {
-            const { patient_id, visit_type } = result.rows[0];
-
-            await pool.query('BEGIN');
-            await pool.query(`DELETE FROM appointment WHERE appointment_id = $1`, [appointmentId]);
-
-            if (visit_type === 'first') {
-                await pool.query(`DELETE FROM patients WHERE patient_id = $1`, [patient_id]);
-            }
-
-            await pool.query('COMMIT');
-
-            await logAppointmentChange(adminId, appointmentId, 'DELETE_APPOINTMENT', oldAppointment, null);
-
-            res.status(200).json({ message: 'Appointment deleted successfully' });
-        } else {
-            res.status(404).json({ message: 'Appointment not found' });
+        if (!oldAppointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
         }
+
+        const { patient_id, visit_type } = oldAppointment;
+
+        await pool.query('BEGIN');
+        await pool.query(`DELETE FROM appointment WHERE appointment_id = $1`, [appointmentId]);
+
+        if (visit_type === 'first') {
+            await pool.query(`DELETE FROM patients WHERE patient_id = $1`, [patient_id]);
+        }
+
+        await pool.query('COMMIT');
+
+        // Pass NULL as appointmentId since the appointment has been deleted
+        await logAppointmentChange(adminId, null, 'DELETE_APPOINTMENT', oldAppointment, null);
+
+        res.status(200).json({ message: 'Appointment deleted successfully' });
     } catch (error) {
         console.error('Error deleting appointment and patient:', error.message);
         await pool.query('ROLLBACK');
@@ -291,17 +286,11 @@ router.put('/status/:id', async (req, res) => {
         const adminId = req.session.userId; 
         const oldAppointment = await getAppointmentById(appointmentId);
 
-        const result = await pool.query(`
-            SELECT patient_id, visit_type, status
-            FROM appointment
-            WHERE appointment_id = $1
-        `, [appointmentId]);
-
-        if (result.rowCount === 0) {
+        if (!oldAppointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        const { patient_id, visit_type } = result.rows[0];
+        const { patient_id, visit_type } = oldAppointment;
 
         if (status === 'Rejected' && visit_type === 'first') {
             await pool.query('BEGIN');
@@ -309,7 +298,8 @@ router.put('/status/:id', async (req, res) => {
             await pool.query(`DELETE FROM patients WHERE patient_id = $1`, [patient_id]);
             await pool.query('COMMIT');
 
-            await logAppointmentChange(adminId, appointmentId, 'REJECT_FIRST_APPOINTMENT', oldAppointment, null);
+            // Pass NULL as appointmentId since the appointment has been deleted
+            await logAppointmentChange(adminId, null, 'REJECT_FIRST_APPOINTMENT', oldAppointment, null);
 
             return res.status(200).json({ message: 'Appointment rejected, and patient data deleted' });
         }
@@ -367,17 +357,11 @@ router.put('/:id/payment', async (req, res) => {
         const adminId = req.session.userId; 
         const oldAppointment = await getAppointmentById(appointmentId);
 
-        const result = await pool.query(`
-            SELECT status
-            FROM appointment
-            WHERE appointment_id = $1
-        `, [appointmentId]);
-
-        if (result.rowCount === 0) {
+        if (!oldAppointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        const { status } = result.rows[0];
+        const { status } = oldAppointment;
 
         if (status !== 'Completed') {
             return res.status(400).json({ message: 'Payment can only be edited for completed appointments.' });
@@ -425,6 +409,10 @@ router.patch('/:id', async (req, res) => {
     try {
         const adminId = req.session.userId; 
         const oldAppointment = await getAppointmentById(appointmentId);
+
+        if (!oldAppointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
 
         let patientResult;
         let patientId;

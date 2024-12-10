@@ -1,4 +1,16 @@
 $(document).ready(function() {
+    // Sidebar toggle functionality
+    $('#sidebar-toggle').click(function() {
+        $('.sidebar').toggleClass('active');
+    });
+
+    // Close sidebar when clicking outside of it
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.sidebar, #sidebar-toggle').length) {
+            $('.sidebar').removeClass('active');
+        }
+    });
+
     function fetchDoctors() {
         $.ajax({
             url: '/dashboard/expenses/doctors',
@@ -11,12 +23,12 @@ $(document).ready(function() {
                     $doctorSelect.append(`<option value="${doc.id}">${doc.name}</option>`);
                 });
             },
-            error: function() {
-                alert('Failed to fetch doctors.');
+            error: function(xhr, status, error) {
+                console.error('Error fetching doctors:', error);
+                alert('Failed to fetch doctors. Please try again.');
             }
         });
     }
-    fetchDoctors();
 
     function fetchExpenses() {
         $.ajax({
@@ -43,19 +55,19 @@ $(document).ready(function() {
                                 <td>${date}</td>
                                 <td>${doctorName}</td>
                                 <td>${type}</td>
-                                <td>${amount}</td>
+                                <td>$${amount}</td>
                                 <td>${description}</td>
                             </tr>
                         `);
                     });
                 }
             },
-            error: function() {
-                alert('Failed to fetch expense history.');
+            error: function(xhr, status, error) {
+                console.error('Error fetching expense history:', error);
+                alert('Failed to fetch expense history. Please try again.');
             }
         });
     }
-    fetchExpenses();
 
     $('#addExpenseForm').on('submit', function(e) {
         e.preventDefault();
@@ -74,7 +86,7 @@ $(document).ready(function() {
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ doctor_id, amount, type, description }),
-            success: function() {
+            success: function(response) {
                 alert('Expense added successfully!');
                 $('#doctorSelect').val('');
                 $('#expenseAmount').val('');
@@ -82,9 +94,21 @@ $(document).ready(function() {
                 $('#expenseDescription').val('');
                 fetchExpenses();
             },
-            error: function() {
-                alert('Failed to add expense.');
+            error: function(xhr, status, error) {
+                console.error('Error adding expense:', error);
+                alert('Failed to add expense. Please try again.');
             }
         });
+    });
+
+    // Initial fetch of doctors and expenses
+    fetchDoctors();
+    fetchExpenses();
+
+    // Responsive behavior for sidebar
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('.sidebar').removeClass('active');
+        }
     });
 });

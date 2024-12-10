@@ -9,36 +9,29 @@ const { logExpenseChange, logIncomeChange } = require('../middleware/logger'); /
 router.use(isAuthenticated);
 router.use(ensureSuperAdmin);
 
-/**
- * GET /dashboard/finance
- * Renders the finance.ejs page
- */
 router.get('/', (req, res) => {
     res.render('admin/finance', { name: req.session.name });
 });
 
 /**
  * GET /dashboard/finance/summary
- * Fetches Total Income, Total Expenses, and Net Income
- * Optional Query Parameters:
- * - startDate: YYYY-MM-DD
- * - endDate: YYYY-MM-DD
+ * Fetches Total Income, Total Expenses amd Net Income
+
  */
 router.get('/summary', async (req, res) => {
     try {
         const { startDate, endDate } = req.query;
-        console.log(`GET /summary called with startDate=${startDate}, endDate=${endDate}`);
-
+       
         // Validate Date Inputs
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
             if (isNaN(start) || isNaN(end)) {
-                console.log('Invalid date format.');
+              
                 return res.status(400).json({ message: 'Invalid date format.' });
             }
             if (start > end) {
-                console.log('Start Date is after End Date.');
+              
                 return res.status(400).json({ message: 'Start Date cannot be after End Date.' });
             }
         }
@@ -51,11 +44,9 @@ router.get('/summary', async (req, res) => {
             ${startDate && endDate ? 'AND payment_date BETWEEN $1 AND $2' : ''}
         `;
         const appointmentIncomeParams = startDate && endDate ? [startDate, endDate] : [];
-        console.log(`Executing Query: ${totalAppointmentIncomeQuery} with params: ${appointmentIncomeParams}`);
-        const appointmentIncomeResult = await pool.query(totalAppointmentIncomeQuery, appointmentIncomeParams);
+       const appointmentIncomeResult = await pool.query(totalAppointmentIncomeQuery, appointmentIncomeParams);
         const totalAppointmentIncome = parseFloat(appointmentIncomeResult.rows[0].total_appointment_income) || 0;
-        console.log(`Total Appointment Income: ${totalAppointmentIncome}`);
-
+       
         // Calculate Total Income from Manual Adjustments
         const totalManualIncomeQuery = `
             SELECT COALESCE(SUM(amount), 0) AS total_manual_income
@@ -63,15 +54,12 @@ router.get('/summary', async (req, res) => {
             ${startDate && endDate ? 'WHERE date BETWEEN $1 AND $2' : ''}
         `;
         const manualIncomeParams = startDate && endDate ? [startDate, endDate] : [];
-        console.log(`Executing Query: ${totalManualIncomeQuery} with params: ${manualIncomeParams}`);
-        const manualIncomeResult = await pool.query(totalManualIncomeQuery, manualIncomeParams);
+       const manualIncomeResult = await pool.query(totalManualIncomeQuery, manualIncomeParams);
         const totalManualIncome = parseFloat(manualIncomeResult.rows[0].total_manual_income) || 0;
-        console.log(`Total Manual Income: ${totalManualIncome}`);
-
+       
         // Calculate Total Income
         const totalIncome = totalAppointmentIncome + totalManualIncome;
-        console.log(`Total Income: ${totalIncome}`);
-
+       
         // Calculate Total Expenses
         const totalExpensesQuery = `
             SELECT COALESCE(SUM(amount), 0) AS total_expenses
@@ -79,15 +67,12 @@ router.get('/summary', async (req, res) => {
             ${startDate && endDate ? 'WHERE date BETWEEN $1 AND $2' : ''}
         `;
         const expensesParams = startDate && endDate ? [startDate, endDate] : [];
-        console.log(`Executing Query: ${totalExpensesQuery} with params: ${expensesParams}`);
         const expensesResult = await pool.query(totalExpensesQuery, expensesParams);
         const totalExpenses = parseFloat(expensesResult.rows[0].total_expenses) || 0;
-        console.log(`Total Expenses: ${totalExpenses}`);
-
+       
         // Calculate Net Income
         const netIncome = totalIncome - totalExpenses;
-        console.log(`Net Income: ${netIncome}`);
-
+      
         res.json({
             totalIncome: totalIncome.toFixed(2),
             totalExpenses: totalExpenses.toFixed(2),
@@ -102,15 +87,11 @@ router.get('/summary', async (req, res) => {
 /**
  * GET /dashboard/finance/chart-data
  * Provides monthly income and expenses for the given date range
- * Query Parameters:
- * - startDate: YYYY-MM-DD
- * - endDate: YYYY-MM-DD
  */
 router.get('/chart-data', async (req, res) => {
     try {
         const { startDate, endDate } = req.query;
-        console.log(`GET /chart-data called with startDate=${startDate}, endDate=${endDate}`);
-
+     
         if (!startDate || !endDate) {
             return res.status(400).json({ message: 'Start Date and End Date are required.' });
         }
@@ -149,8 +130,7 @@ router.get('/chart-data', async (req, res) => {
                 AND TO_CHAR(payment_date, 'YYYY-MM') = $1
             `, [monthStr]);
             const appointmentIncome = parseFloat(incomeResult.rows[0].total_appointment_income) || 0;
-            console.log(`Month: ${monthStr}, Appointment Income: ${appointmentIncome}`);
-
+          
             // Calculate income for the month from Manual Adjustments
             const manualIncomeResult = await pool.query(`
                 SELECT COALESCE(SUM(amount), 0) AS total_manual_income
@@ -158,8 +138,7 @@ router.get('/chart-data', async (req, res) => {
                 WHERE TO_CHAR(date, 'YYYY-MM') = $1
             `, [monthStr]);
             const manualIncome = parseFloat(manualIncomeResult.rows[0].total_manual_income) || 0;
-            console.log(`Month: ${monthStr}, Manual Income: ${manualIncome}`);
-
+          
             incomeData.push(appointmentIncome + manualIncome);
 
             // Calculate expenses for the month
@@ -192,15 +171,11 @@ router.get('/chart-data', async (req, res) => {
 /**
  * GET /dashboard/finance/expense-categories
  * Provides distribution of expenses by category within a date range
- * Query Parameters:
- * - startDate: YYYY-MM-DD
- * - endDate: YYYY-MM-DD
  */
 router.get('/expense-categories', async (req, res) => {
     try {
         const { startDate, endDate } = req.query;
-        console.log(`GET /expense-categories called with startDate=${startDate}, endDate=${endDate}`);
-
+      
         if (!startDate || !endDate) {
             return res.status(400).json({ message: 'Start Date and End Date are required.' });
         }
@@ -224,8 +199,7 @@ router.get('/expense-categories', async (req, res) => {
             GROUP BY type
         `;
         const result = await pool.query(query, [startDate, endDate]);
-        console.log(`Fetched ${result.rows.length} expense categories.`);
-        res.json(result.rows);
+      res.json(result.rows);
     } catch (error) {
         console.error('Error fetching expense categories:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -239,19 +213,16 @@ router.get('/expense-categories', async (req, res) => {
 router.get('/incomes', async (req, res) => {
     try {
         const { startDate, endDate } = req.query;
-        console.log(`GET /incomes called with startDate=${startDate}, endDate=${endDate}`);
-
+      
         // Validate Date Inputs
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
             if (isNaN(start) || isNaN(end)) {
-                console.log('Invalid date format.');
-                return res.status(400).json({ message: 'Invalid date format.' });
+             return res.status(400).json({ message: 'Invalid date format.' });
             }
             if (start > end) {
-                console.log('Start Date is after End Date.');
-                return res.status(400).json({ message: 'Start Date cannot be after End Date.' });
+               return res.status(400).json({ message: 'Start Date cannot be after End Date.' });
             }
         }
 
@@ -265,9 +236,7 @@ router.get('/incomes', async (req, res) => {
             query += ' ORDER BY date DESC';
         }
 
-        console.log(`Executing Query: ${query} with params: ${params}`);
-        const incomesResult = await pool.query(query, params);
-        console.log(`Fetched ${incomesResult.rows.length} incomes.`);
+      const incomesResult = await pool.query(query, params);
         res.json(incomesResult.rows);
     } catch (error) {
         console.error('Error fetching manual incomes:', error);
@@ -279,9 +248,9 @@ router.get('/incomes', async (req, res) => {
  * POST /dashboard/finance/incomes
  * Adds a new manual income adjustment
  * Body Parameters:
- * - description: String
- * - amount: Number
- * - date: YYYY-MM-DD (optional)
+ * description: String
+ * amount: Number
+ *  date: YYYY-MM-DD (optional)
  */
 router.post('/incomes', async (req, res) => {
     const { description, amount, date } = req.body;
@@ -320,10 +289,6 @@ router.post('/incomes', async (req, res) => {
 /**
  * PUT /dashboard/finance/incomes/:id
  * Updates an existing manual income adjustment
- * Body Parameters:
- * - description: String
- * - amount: Number
- * - date: YYYY-MM-DD (optional)
  */
 router.put('/incomes/:id', async (req, res) => {
     const incomeId = req.params.id;
@@ -403,8 +368,7 @@ router.get('/incomes/:id', async (req, res) => {
     const incomeId = req.params.id;
 
     try {
-        console.log(`GET /incomes/${incomeId} called`);
-        const result = await pool.query('SELECT * FROM incomes WHERE id = $1', [incomeId]);
+      const result = await pool.query('SELECT * FROM incomes WHERE id = $1', [incomeId]);
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Manual income not found.' });
         }

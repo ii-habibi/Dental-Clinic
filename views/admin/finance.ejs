@@ -1,4 +1,3 @@
-<!-- views/admin/finance.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,6 @@
     <title>Finance - Dental Clinic Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
     <link rel="stylesheet" href="/css/finance.css">
     <script src="/js/chart.js"></script>
     <script src="/js/jquery-3.6.0.min.js"></script>
@@ -18,10 +16,6 @@
         <header class="main-header">
             <div class="header-content">
                 <h1>Finance Management</h1>
-                <div class="user-info">
-                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
-                    <span class="user-name"><%= name %></span>
-                </div>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
                 <i class="fas fa-bars"></i>
@@ -40,15 +34,14 @@
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
                 <a href="/dashboard/expenses"><i class="fas fa-dollar-sign"></i> Expenses</a>
+                <a href="/dashboard/finance" class="active"><i class="fas fa-chart-line"></i> Finance</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
-                <a href="/dashboard/finance" class="active"><i class="fas fa-chart-line"></i> Finance</a> <!-- Corrected Link -->
             </nav>
             <div class="sidebar-footer">
                 <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </aside>
         <main class="main-content">
-            <!-- Financial Summary Section -->
             <div class="dashboard-card">
                 <div class="financial-summary">
                     <h2>Financial Summary</h2>
@@ -67,9 +60,9 @@
                         <p>Total Expenses: PKR <span id="totalExpenses">0.00</span></p>
                         <p>Net Income: PKR <span id="netIncome">0.00</span></p>
                     </div>
-                    <div class="charts">
-                        <canvas id="financialChart" width="400" height="200"></canvas>
-                        <canvas id="expensePieChart" width="400" height="200"></canvas>
+                    <div class="charts" >
+                        <canvas id="financialChart" style="max-height: 450px; max-width: 450px;"></canvas>
+                        <canvas id="expensePieChart" style="max-height: 450px; max-width: 450px;"></canvas>
                     </div>
                     <div class="manual-adjustments">
                         <h3>Manual Adjustments</h3>

@@ -1,4 +1,3 @@
-// public/js/finance.js
 $(document).ready(function() {
     // Sidebar toggle functionality
     $('#sidebar-toggle').click(function() {
@@ -50,64 +49,45 @@ $(document).ready(function() {
     let financialChart;
     let expensePieChart;
 
-    /**
-     * Financial Summary Functionality
-     */
-
     // Function to fetch and display financial summary
     function fetchFinancialSummary() {
         const startDate = $('#startDate').val();
         const endDate = $('#endDate').val();
 
-        // Validate Date Inputs
         if (!startDate || !endDate) {
             alert('Please select both Start Date and End Date.');
             return;
         }
 
-        // Ensure Start Date is before End Date
         if (new Date(startDate) > new Date(endDate)) {
             alert('Start Date cannot be after End Date.');
             return;
         }
 
-        // Show Loading Indicator
-        // $('.summary-results').html('<p>Loading...</p>');
-
-        // Make AJAX GET Request to Fetch Summary
         $.ajax({
             url: '/dashboard/finance/summary',
             type: 'GET',
             data: { startDate, endDate },
             success: function(response) {
-                console.log("Summary:", response);
                 $('#totalIncome').text(response.totalIncome);
                 $('#totalExpenses').text(response.totalExpenses);
                 $('#netIncome').text(response.netIncome);
 
-                // Fetch data for bar chart
                 fetchFinancialChartData(startDate, endDate);
-
-                // Fetch data for expense pie chart
                 fetchExpenseCategories(startDate, endDate);
-
-                // Fetch manual adjustments
                 fetchManualAdjustments(startDate, endDate);
             },
             error: function(xhr) {
                 console.error('Error fetching financial summary:', xhr);
-                alert('Failed to fetch financial summary. Status: ' + xhr.status + ' - ' + xhr.responseText);
-                $('.summary-results').html('<p>Error loading data.</p>');
+                alert('Failed to fetch financial summary. Please try again.');
             }
         });
     }
 
-    // Function to fetch financial summary on button click
-    $('#fetchFinancialSummary').click(function() {
-        fetchFinancialSummary();
-    });
+    // Fetch financial summary on button click
+    $('#fetchFinancialSummary').click(fetchFinancialSummary);
 
-    // Function to reset filters
+    // Reset filters
     $('#resetFilters').click(function() {
         $('#startDate').val('');
         $('#endDate').val('');
@@ -117,10 +97,6 @@ $(document).ready(function() {
         $('#manualAdjustmentsTable tbody').empty();
     });
 
-    /**
-     * Chart Functionality
-     */
-
     // Function to fetch data for financial bar chart
     function fetchFinancialChartData(startDate, endDate) {
         $.ajax({
@@ -128,12 +104,11 @@ $(document).ready(function() {
             type: 'GET',
             data: { startDate, endDate },
             success: function(data) {
-                console.log("Chart Data:", data);
                 renderFinancialBarChart(data);
             },
             error: function(xhr) {
                 console.error('Error fetching chart data:', xhr);
-                alert('Failed to fetch financial chart data. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                alert('Failed to fetch financial chart data. Please try again.');
             }
         });
     }
@@ -165,6 +140,7 @@ $(document).ready(function() {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -191,12 +167,11 @@ $(document).ready(function() {
             type: 'GET',
             data: { startDate, endDate },
             success: function(data) {
-                console.log("Expense Categories:", data);
                 renderExpensePieChart(data);
             },
             error: function(xhr) {
                 console.error('Error fetching expense categories:', xhr);
-                alert('Failed to fetch expense categories. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                alert('Failed to fetch expense categories. Please try again.');
             }
         });
     }
@@ -211,8 +186,6 @@ $(document).ready(function() {
 
         const labels = data.map(item => item.type);
         const expenses = data.map(item => parseFloat(item.total));
-
-        // Generate distinct colors for each slice
         const backgroundColors = labels.map(() => getRandomColor());
 
         expensePieChart = new Chart(ctx, {
@@ -226,6 +199,7 @@ $(document).ready(function() {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         position: 'top',
@@ -239,20 +213,6 @@ $(document).ready(function() {
         });
     }
 
-    // Utility function to generate random color
-    function getRandomColor() {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-    /**
-     * Manual Adjustments Functionality
-     */
-
     // Function to fetch manual adjustments
     function fetchManualAdjustments(startDate, endDate) {
         $.ajax({
@@ -260,12 +220,11 @@ $(document).ready(function() {
             type: 'GET',
             data: { startDate, endDate },
             success: function(data) {
-                console.log("Income Get:", data);
                 populateManualAdjustmentsTable(data);
             },
             error: function(xhr) {
                 console.error('Error fetching manual adjustments:', xhr);
-                alert('Failed to fetch manual adjustments. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                alert('Failed to fetch manual adjustments. Please try again.');
             }
         });
     }
@@ -314,7 +273,6 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ description, amount, date }),
             success: function(response) {
-                console.log("Income Post:", response);
                 alert(response.message);
                 manualAdjustmentModal.css("display", "none");
                 resetAllForms();
@@ -322,7 +280,7 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 const response = xhr.responseJSON;
-                alert(response && response.message ? response.message : 'An error occurred while adding the adjustment. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                alert(response && response.message ? response.message : 'An error occurred while adding the adjustment.');
             }
         });
     });
@@ -331,12 +289,10 @@ $(document).ready(function() {
     $(document).on('click', '.btn-edit-adjustment', function() {
         const adjustmentId = $(this).data('id');
 
-        // Fetch adjustment details
         $.ajax({
             url: `/dashboard/finance/incomes/${adjustmentId}`,
             type: 'GET',
             success: function(response) {
-                console.log("Incomes with id Get:", response);
                 const adjustment = response.income;
                 if (adjustment) {
                     $('#editAdjustmentId').val(adjustment.id);
@@ -350,7 +306,7 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 console.error('Error fetching adjustment details:', xhr);
-                alert('Failed to fetch adjustment details. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                alert('Failed to fetch adjustment details. Please try again.');
             }
         });
     });
@@ -374,7 +330,6 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ description, amount, date }),
             success: function(response) {
-                console.log("Income PUT:", response);
                 alert(response.message);
                 editManualAdjustmentModal.css("display", "none");
                 resetAllForms();
@@ -382,7 +337,7 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 const response = xhr.responseJSON;
-                alert(response && response.message ? response.message : 'An error occurred while updating the adjustment. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                alert(response && response.message ? response.message : 'An error occurred while updating the adjustment.');
             }
         });
     });
@@ -396,21 +351,16 @@ $(document).ready(function() {
                 url: `/dashboard/finance/incomes/${adjustmentId}`,
                 type: 'DELETE',
                 success: function(response) {
-                    console.log("Income Delete:", response);
                     alert(response.message);
                     fetchFinancialSummary();
                 },
                 error: function(xhr) {
                     const response = xhr.responseJSON;
-                    alert(response && response.message ? response.message : 'An error occurred while deleting the adjustment. Status: ' + xhr.status + ' - ' + xhr.responseText);
+                    alert(response && response.message ? response.message : 'An error occurred while deleting the adjustment.');
                 }
             });
         }
     });
-
-    /**
-     * Utility Functions
-     */
 
     // Utility function to generate random color
     function getRandomColor() {
@@ -422,10 +372,6 @@ $(document).ready(function() {
         return color;
     }
 
-    /**
-     * Initial Load
-     */
-
     // Set default date range to current month
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
@@ -434,9 +380,7 @@ $(document).ready(function() {
     $('#endDate').val(lastDayOfMonth);
     fetchFinancialSummary();
 
-    /**
-     * Responsive behavior for sidebar
-     */
+    // Responsive behavior for sidebar
     $(window).resize(function() {
         if ($(window).width() > 768) {
             $('.sidebar').removeClass('active');

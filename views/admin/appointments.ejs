@@ -11,10 +11,18 @@
 <body>
     <header class="admin-header">
         <div class="container">
-            <h1 class="admin-title">Dental Clinic Admin</h1>
+            <h1 class="admin-title">Dental Care</h1>
             <nav class="admin-nav">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/dashboard/services" class="nav-link">Services</a>
+                <a href="/dashboard/blogs" class="nav-link">Blog</a>
+                <a href="/dashboard/doctor" class="nav-link">Doctors</a>
                 <a href="/dashboard/appointments" class="nav-link">Manage Appointments</a>
+                <a href="/dashboard/patients" class="nav-link">Patients</a>
+                <a href="/dashboard/expenses" class="nav-link">Expenses</a>
+                <a href="/dashboard/finance" class="nav-link">Finance</a>
+                <a href="/dashboard/admin" class="nav-link">Admin</a>
+
             </nav>
         </div>
     </header>
@@ -28,7 +36,9 @@
 
             <!-- AJAX Search Form -->
             <form id="searchForm" style="margin:10px 0;">
+                <div class="form-group">
                 <input type="text" id="searchInput" placeholder="Search by doctor/patient name/email/phone">
+            </div>
             </form>
 
             <div class="appointment-items" id="appointmentItems">

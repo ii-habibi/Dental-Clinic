@@ -190,43 +190,53 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 // Route to update the status of an appointment
+// Route to update the status of an appointment with payment details
 router.put('/status/:id', async (req, res) => {
     const appointmentId = req.params.id;
-    const { status } = req.body;
+    const { status, payment_status, amount, payment_date } = req.body; // Include payment details in the request
+
     try {
-       
         const result = await pool.query(`
             SELECT patient_id, visit_type 
             FROM appointment 
             WHERE appointment_id = $1
         `, [appointmentId]);
-            console.log(appointmentId, status)
+
         if (result.rowCount > 0) {
             const { patient_id, visit_type } = result.rows[0];
 
-            
             if (status === 'Rejected' && visit_type === 'first') {
                 await pool.query('BEGIN');
                 await pool.query(`DELETE FROM appointment WHERE appointment_id = $1`, [appointmentId]);
                 await pool.query(`DELETE FROM patients WHERE patient_id = $1`, [patient_id]);
                 await pool.query('COMMIT');
                 res.status(200).json({ message: 'Appointment rejected, and patient data deleted' });
+            } else if (status === 'Approved') {
+                // Update appointment status and add payment details
+                await pool.query(`
+                    UPDATE appointment
+                    SET status = $1, payment_status = $2, amount = $3, payment_date = $4
+                    WHERE appointment_id = $5
+                `, [status, payment_status || 'Paid', amount || 0, payment_date || new Date(), appointmentId]);
+
+                res.status(200).json({ message: 'Appointment approved with payment details' });
             } else {
-               
                 await pool.query(`
                     UPDATE appointment SET status = $1 WHERE appointment_id = $2
                 `, [status, appointmentId]);
+
                 res.status(200).json({ message: `Appointment ${status} successfully` });
             }
         } else {
             res.status(404).json({ message: 'Appointment not found' });
         }
     } catch (error) {
-        console.error('Error updating appointment status:', error.message);
-        await pool.query('ROLLBACK');  
+        console.error('Error updating appointment status with payment:', error.message);
+        await pool.query('ROLLBACK');
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 
 
 router.patch('/:id', async (req, res) => {

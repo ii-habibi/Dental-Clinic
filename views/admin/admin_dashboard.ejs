@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,14 +12,18 @@
     <script src="/js/adminDashboard.js"></script>
     <script src="/js/chart.js"></script>
 </head>
+
 <body>
     <div class="dashboard-container">
         <header class="main-header">
             <div class="header-content">
-                <h1>Welcome, Dr. <%= name %></h1>
+                <h1>Welcome, Dr. <%= name %>
+                </h1>
                 <div class="user-info">
                     <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
-                    <span class="user-name"><%= name %></span>
+                    <span class="user-name">
+                        <%= name %>
+                    </span>
                 </div>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -37,6 +42,7 @@
                 <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
+                <a href="/dashboard/expenses" class=""><i class="fas fa-money-check-dollar"></i>Expenses</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
             <div class="sidebar-footer">
@@ -120,4 +126,5 @@
         </div>
     </footer>
 </body>
+
 </html>

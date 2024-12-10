@@ -4,7 +4,7 @@ const pool = require('../models/db');
 const { ensureSuperAdmin, isAuthenticated } = require('../middleware/auth');
 
 // Protect all admin routes
-router.use(isAuthenticated);
+// router.use(isAuthenticated);
 
 // Route to Dashboard
 router.get('/', (req, res) => {
@@ -114,5 +114,10 @@ router.use("/doctor", doctorsRoute)
 const appointmentRoutes = require('./appointments');
 router.use('/appointments', appointmentRoutes);
 
+// Expenses Route
+const expensesRoutes = require('./expenses');
+router.use('/expenses', expensesRoutes);
 
+const dashboardRouter = require('./audit-logs');
+router.use('/audit',dashboardRouter)
 module.exports = router;

@@ -12,9 +12,9 @@ $(document).ready(function() {
               if (response.success) {
                   // Successful login
                   $('#message').html('<p class="success">Login successful. Redirecting to dashboard...</p>');
-                  setTimeout(function() {
+                  
                       window.location.href = '/dashboard'; // Redirect to dashboard
-                  }, 1500);
+                  
               } else {
                   // Login failed
                   $('#message').html('<p class="error">' + response.message + '</p>');

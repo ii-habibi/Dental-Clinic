@@ -1,6 +1,9 @@
 $(document).ready(function() {
     const modal = $("#appointmentFormModal");
     const editModal = $("#editAppointmentModal");
+    const paymentModal = $("#paymentModal");
+    const editPaymentModal = $("#editPaymentModal");
+
     const openModalBtn = $("#openAppointmentForm");
     const closeModalBtn = $(".close");
 
@@ -10,24 +13,27 @@ $(document).ready(function() {
         $(this).closest('.modal').css("display", "none");
         $('#appointmentForm')[0].reset();
         $('#editAppointmentForm')[0].reset();
+        $('#paymentForm')[0].reset();
+        $('#editPaymentForm')[0].reset();
     });
 
     $(window).click((event) => {
-        if (event.target === modal[0] || event.target === editModal[0]) {
+        if (event.target === modal[0] || event.target === editModal[0] || event.target === paymentModal[0] || event.target === editPaymentModal[0]) {
             modal.css("display", "none");
             editModal.css("display", "none");
+            paymentModal.css("display", "none");
+            editPaymentModal.css("display", "none");
             $('#appointmentForm')[0].reset();
             $('#editAppointmentForm')[0].reset();
+            $('#paymentForm')[0].reset();
+            $('#editPaymentForm')[0].reset();
         }
     });
 
-    // Form submission handling
+    // Booking a new appointment
     $('#appointmentForm').on('submit', function(event) {
         event.preventDefault();
-        const formData = $(this).serializeArray();
-        const data = {};
-        formData.forEach(item => (data[item.name] = item.value));
-
+        const data = formDataToJson($(this).serializeArray());
         $.ajax({
             url: '/dashboard/appointments',
             type: 'POST',
@@ -37,25 +43,76 @@ $(document).ready(function() {
                 alert('Appointment booked successfully!');
                 modal.css("display", "none");
                 $('#appointmentForm')[0].reset();
-                location.reload(); // Reload to show the new appointment
+                location.reload();
             },
             error: (xhr) => {
                 const response = xhr.responseJSON;
-                alert(response && response.message
-                    ? response.message
-                    : 'An error occurred while booking the appointment.'
-                );
+                alert(response && response.message ? response.message : 'An error occurred while booking the appointment.');
             }
         });
     });
 
-    // Appointment item click handler
-    $('.appointment-item').click(function() {
+    // Initial binding for appointment items
+    $('.appointment-item').on('click', function() {
         const appointmentId = $(this).data('id');
         $('.appointment-item').removeClass('active');
         $(this).addClass('active');
         loadAppointmentDetails(appointmentId);
     });
+
+    // AJAX search with debounce
+    let searchTimeout;
+    $('#searchInput').on('keyup', function() {
+        clearTimeout(searchTimeout);
+        const query = $(this).val().trim();
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+
+    function performSearch(query) {
+        $.ajax({
+            url: '/dashboard/appointments/search',
+            method: 'GET',
+            data: { search: query },
+            success: function(response) {
+                const appointments = response.appointments;
+                const $container = $('#appointmentItems');
+                $container.empty();
+
+                if (appointments.length === 0) {
+                    $container.append('<p>No appointments found.</p>');
+                    return;
+                }
+
+                appointments.forEach(app => {
+                    const dateFormatted = new Date(app.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    const itemHtml = `
+                        <div class="appointment-item" data-id="${app.appointment_id}">
+                            <div class="appointment-summary">
+                                <h3>${app.name}</h3>
+                                <p>${app.treatment_type || ''}</p>
+                                <span class="appointment-date">${dateFormatted}</span>
+                                <span class="appointment-status status-${app.status.toLowerCase()}">${app.status}</span>
+                            </div>
+                        </div>
+                    `;
+                    $container.append(itemHtml);
+                });
+
+                // Re-bind click event
+                $('.appointment-item').off('click').on('click', function() {
+                    const appointmentId = $(this).data('id');
+                    $('.appointment-item').removeClass('active');
+                    $(this).addClass('active');
+                    loadAppointmentDetails(appointmentId);
+                });
+            },
+            error: function() {
+                alert('Error searching appointments.');
+            }
+        });
+    }
 
     function loadAppointmentDetails(appointmentId) {
         $.ajax({
@@ -63,55 +120,32 @@ $(document).ready(function() {
             type: 'GET',
             success: (appointmentData) => {
                 const appointment = appointmentData.appointment;
+                let paymentInfoHtml = `
+                    <h3>Payment Information</h3>
+                    <div class="info-group"><label>Status:</label><span>${appointment.payment_status || 'N/A'}</span></div>
+                    <div class="info-group"><label>Amount:</label><span>${appointment.amount !== null ? appointment.amount : 'N/A'}</span></div>
+                    <div class="info-group"><label>Date:</label><span>${appointment.payment_date ? new Date(appointment.payment_date).toLocaleDateString('en-US') : 'N/A'}</span></div>
+                    <div class="info-group"><label>Message:</label><p>${appointment.payment_message || 'N/A'}</p></div>
+                `;
+
                 const detailsHtml = `
                     <h2>Appointment Details</h2>
                     <div class="appointment-info">
                         <div class="patient-info">
                             <h3>Patient Information</h3>
-                            <div class="info-group">
-                                <label>Name:</label>
-                                <span>${appointment.patient_name}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Gender:</label>
-                                <span>${appointment.gender}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Age:</label>
-                                <span>${appointment.age}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Email:</label>
-                                <span>${appointment.email}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Phone:</label>
-                                <span>${appointment.phone}</span>
-                            </div>
+                            <div class="info-group"><label>Name:</label><span>${appointment.patient_name}</span></div>
+                            <div class="info-group"><label>Gender:</label><span>${appointment.gender}</span></div>
+                            <div class="info-group"><label>Age:</label><span>${appointment.age}</span></div>
+                            <div class="info-group"><label>Email:</label><span>${appointment.email}</span></div>
+                            <div class="info-group"><label>Phone:</label><span>${appointment.phone}</span></div>
                         </div>
                         <div class="appointment-details">
                             <h3>Appointment Information</h3>
-                            <div class="info-group">
-                                <label>Doctor:</label>
-                                <span>${appointment.doctor_name}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Date:</label>
-                                <span>${new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Time:</label>
-                                <span>${appointment.appointment_time || 'N/A'}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Visit Type:</label>
-                                <span>${appointment.visit_type}</span>
-                            </div>
-                            <div class="info-group">
-                                <label>Status:</label>
-                            <span class="appointment-status status-${appointment.status.toLowerCase()}">${appointment.status}</span>
-
-                            </div>
+                            <div class="info-group"><label>Doctor:</label><span>${appointment.doctor_name}</span></div>
+                            <div class="info-group"><label>Date:</label><span>${new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
+                            <div class="info-group"><label>Time:</label><span>${appointment.appointment_time || 'N/A'}</span></div>
+                            <div class="info-group"><label>Visit Type:</label><span>${appointment.visit_type}</span></div>
+                            <div class="info-group"><label>Status:</label><span class="appointment-status status-${appointment.status.toLowerCase()}">${appointment.status}</span></div>
                         </div>
                     </div>
                     <div class="treatment-notes">
@@ -123,6 +157,9 @@ $(document).ready(function() {
                             <label>Notes:</label>
                             <p>${appointment.notes || 'No notes'}</p>
                         </div>
+                    </div>
+                    <div class="payment-section">
+                        ${paymentInfoHtml}
                     </div>
                     <div class="appointment-actions">
                         ${getActionButtons(appointment)}
@@ -147,7 +184,13 @@ $(document).ready(function() {
             buttons += `
                 <button class="btn btn-complete" data-id="${appointment.appointment_id}" data-status="Completed">Mark as Completed</button>
             `;
+        } else if (appointment.status === 'Completed') {
+            // Edit Payment option for completed appointments
+            buttons += `
+                <button class="btn btn-edit-payment" data-id="${appointment.appointment_id}">Edit Payment</button>
+            `;
         }
+
         buttons += `
             <button class="btn btn-edit" data-id="${appointment.appointment_id}">Edit</button>
             <button class="btn btn-delete" data-id="${appointment.appointment_id}">Delete</button>
@@ -155,8 +198,8 @@ $(document).ready(function() {
         return buttons;
     }
 
-    // Event delegation for approve, reject, complete, edit, and delete actions
-    $(document).on('click', '.btn-approve, .btn-reject, .btn-complete, .btn-edit, .btn-delete', function() {
+    // Event delegation for actions
+    $(document).on('click', '.btn-approve, .btn-reject, .btn-complete, .btn-edit, .btn-delete, .btn-edit-payment', function() {
         const $button = $(this);
         const appointmentId = $button.data('id');
         const status = $button.data('status');
@@ -165,6 +208,14 @@ $(document).ready(function() {
             handleDelete(appointmentId);
         } else if ($button.hasClass('btn-edit')) {
             handleEdit(appointmentId);
+        } else if ($button.hasClass('btn-complete')) {
+            // Show payment modal before completing
+            $('#payment_appointment_id').val(appointmentId);
+            const today = new Date().toISOString().split('T')[0];
+            $('#payment_date').val(today);
+            paymentModal.css("display", "block");
+        } else if ($button.hasClass('btn-edit-payment')) {
+            handleEditPayment(appointmentId);
         } else {
             handleStatusChange(appointmentId, status);
         }
@@ -235,19 +286,15 @@ $(document).ready(function() {
         $('#edit-doctor').val(appointment.doctor_id);
         $('#edit-date').val(appointment.appointment_date.split('T')[0]);
         $('#edit-time').val(appointment.appointment_time);
-        
         $('#edit-treatment').val(appointment.treatment_type);
         $('#edit-visitType').val(appointment.visit_type);
         $('#edit-notes').val(appointment.notes);
-        $('#edit-status').val(appointment.status);  // Ensure this input exists in the form
-
+        $('#edit-status').val(appointment.status);
     }
 
     $('#editAppointmentForm').on('submit', function(event) {
         event.preventDefault();
-        const formData = $(this).serializeArray();
-        const data = {};
-        formData.forEach(item => (data[item.name] = item.value));
+        const data = formDataToJson($(this).serializeArray());
 
         $.ajax({
             url: `/dashboard/appointments/${data.appointment_id}`,
@@ -263,10 +310,107 @@ $(document).ready(function() {
             },
             error: (xhr) => {
                 const response = xhr.responseJSON;
-                alert(response && response.message
-                    ? response.message
-                    : 'An error occurred while updating the appointment.'
-                );
+                alert(response && response.message ? response.message : 'An error occurred while updating the appointment.');
+            }
+        });
+    });
+
+    // Payment form submission (Completing Appointment)
+    $('#paymentForm').on('submit', function(event) {
+        event.preventDefault();
+        const appointmentId = $('#payment_appointment_id').val();
+        const amount = $('#payment_amount').val();
+        const payment_status = $('#payment_status').val();
+        const payment_date = $('#payment_date').val();
+        const payment_message = $('#payment_message').val();
+
+        const data = {
+            status: 'Completed',
+            amount: amount,
+            payment_status: payment_status,
+            payment_date: payment_date,
+            payment_message: payment_message
+        };
+
+        $.ajax({
+            url: `/dashboard/appointments/status/${appointmentId}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (response) => {
+                alert(response.message);
+                paymentModal.css("display", "none");
+                $('#paymentForm')[0].reset();
+                updateAppointmentItem(appointmentId, 'Completed');
+                loadAppointmentDetails(appointmentId);
+            },
+            error: (xhr) => {
+                const response = xhr.responseJSON;
+                alert(response && response.message ? response.message : 'An error occurred while completing the appointment.');
+            }
+        });
+    });
+
+    function handleEditPayment(appointmentId) {
+        // Fetch current payment details and populate edit payment form
+        $.ajax({
+            url: `/dashboard/appointments/${appointmentId}`,
+            type: 'GET',
+            success: (appointmentData) => {
+                const appointment = appointmentData.appointment;
+                if (appointment.status !== 'Completed') {
+                    alert('Payment can only be edited for completed appointments.');
+                    return;
+                }
+                populateEditPaymentForm(appointment);
+                editPaymentModal.css("display", "block");
+            },
+            error: (xhr) => {
+                alert('Error fetching appointment details.');
+            }
+        });
+    }
+
+    function populateEditPaymentForm(appointment) {
+        $('#edit_payment_appointment_id').val(appointment.appointment_id);
+        $('#edit_payment_amount').val(appointment.amount || '');
+        $('#edit_payment_status').val(appointment.payment_status || 'Paid');
+
+        const date = appointment.payment_date ? appointment.payment_date.split('T')[0] : new Date().toISOString().split('T')[0];
+        $('#edit_payment_date').val(date);
+        $('#edit_payment_message').val(appointment.payment_message || '');
+    }
+
+    // Edit Payment form submission
+    $('#editPaymentForm').on('submit', function(event) {
+        event.preventDefault();
+        const appointmentId = $('#edit_payment_appointment_id').val();
+        const amount = $('#edit_payment_amount').val();
+        const payment_status = $('#edit_payment_status').val();
+        const payment_date = $('#edit_payment_date').val();
+        const payment_message = $('#edit_payment_message').val();
+
+        const data = {
+            amount: amount,
+            payment_status: payment_status,
+            payment_date: payment_date,
+            payment_message: payment_message
+        };
+
+        $.ajax({
+            url: `/dashboard/appointments/${appointmentId}/payment`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: (response) => {
+                alert(response.message);
+                editPaymentModal.css("display", "none");
+                $('#editPaymentForm')[0].reset();
+                loadAppointmentDetails(appointmentId);
+            },
+            error: (xhr) => {
+                const response = xhr.responseJSON;
+                alert(response && response.message ? response.message : 'An error occurred while updating the payment.');
             }
         });
     });
@@ -278,5 +422,10 @@ $(document).ready(function() {
             .addClass(`status-${status.toLowerCase()}`)
             .text(status);
     }
-    
+
+    function formDataToJson(formData) {
+        const data = {};
+        formData.forEach(item => (data[item.name] = item.value));
+        return data;
+    }
 });

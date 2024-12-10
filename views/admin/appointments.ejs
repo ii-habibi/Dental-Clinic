@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +8,6 @@
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/appointments.js"></script>
 </head>
-
 <body>
     <header class="admin-header">
         <div class="container">
@@ -27,26 +25,27 @@
                 <h2>Appointments</h2>
                 <button id="openAppointmentForm" class="btn btn-primary">New Appointment</button>
             </div>
-            <div class="appointment-items">
-                <% appointments.forEach(appointment=> { %>
+
+            <!-- AJAX Search Form -->
+            <form id="searchForm" style="margin:10px 0;">
+                <input type="text" id="searchInput" placeholder="Search by doctor/patient name/email/phone">
+            </form>
+
+            <div class="appointment-items" id="appointmentItems">
+                <% appointments.forEach(appointment => { %>
                     <div class="appointment-item" data-id="<%= appointment.appointment_id %>">
                         <div class="appointment-summary">
-                            <h3>
-                                <%= appointment.name %>
-                            </h3>
-                            <p>
-                                <%= appointment.treatment_type %>
-                            </p>
+                            <h3><%= appointment.name %></h3>
+                            <p><%= appointment.treatment_type %></p>
                             <span class="appointment-date">
-                                <%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short'
-                                    , day: 'numeric' , year: 'numeric' }) %>
+                                <%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
                             </span>
                             <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
                                 <%= appointment.status %>
                             </span>
                         </div>
                     </div>
-                    <% }) %>
+                <% }) %>
             </div>
         </aside>
 
@@ -55,7 +54,7 @@
         </section>
     </main>
 
-    <!-- Appointment Form Modal -->
+    <!-- Appointment Booking Modal -->
     <div id="appointmentFormModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -92,10 +91,8 @@
                         <label for="doctor">Select Doctor:</label>
                         <select name="doctor_id" id="doctor" required>
                             <% doctors.forEach(doctor=> { %>
-                                <option value="<%= doctor.id %>">
-                                    <%= doctor.name %>
-                                </option>
-                                <% }) %>
+                                <option value="<%= doctor.id %>"><%= doctor.name %></option>
+                            <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
@@ -164,10 +161,8 @@
                         <label for="edit-doctor">Select Doctor:</label>
                         <select name="doctor_id" id="edit-doctor">
                             <% doctors.forEach(doctor=> { %>
-                                <option value="<%= doctor.id %>">
-                                    <%= doctor.name %>
-                                </option>
-                                <% }) %>
+                                <option value="<%= doctor.id %>"><%= doctor.name %></option>
+                            <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
@@ -196,11 +191,74 @@
                 </div>
                 <input type="hidden" name="appointment_id" id="edit-appointment-id">
                 <input type="hidden" id="edit-status" name="status" value="Pending">
-
                 <button type="submit" class="btn btn-primary">Update Appointment</button>
             </form>
         </div>
     </div>
-</body>
 
+    <!-- Payment Modal for Completing Appointment -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Record Payment</h2>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="payment_amount">Amount:</label>
+                    <input type="number" step="0.01" name="amount" id="payment_amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment_status">Payment Status:</label>
+                    <select name="payment_status" id="payment_status">
+                        <option value="Paid" selected>Paid</option>
+                        <option value="Partial">Partial</option>
+                        <option value="Not Paid">Not Paid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="payment_date">Payment Date:</label>
+                    <input type="date" name="payment_date" id="payment_date">
+                </div>
+                <div class="form-group">
+                    <label for="payment_message">Payment Message (optional):</label>
+                    <textarea name="payment_message" id="payment_message" placeholder="Add any payment notes..."></textarea>
+                </div>
+                <input type="hidden" id="payment_appointment_id">
+                <button type="submit" class="btn btn-primary">Complete Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Payment Modal -->
+    <div id="editPaymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Payment</h2>
+            <form id="editPaymentForm">
+                <div class="form-group">
+                    <label for="edit_payment_amount">Amount:</label>
+                    <input type="number" step="0.01" name="amount" id="edit_payment_amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_payment_status">Payment Status:</label>
+                    <select name="payment_status" id="edit_payment_status">
+                        <option value="Paid">Paid</option>
+                        <option value="Partial">Partial</option>
+                        <option value="Not Paid">Not Paid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_payment_date">Payment Date:</label>
+                    <input type="date" name="payment_date" id="edit_payment_date">
+                </div>
+                <div class="form-group">
+                    <label for="edit_payment_message">Payment Message (optional):</label>
+                    <textarea name="payment_message" id="edit_payment_message" placeholder="Update any payment notes..."></textarea>
+                </div>
+                <input type="hidden" id="edit_payment_appointment_id">
+                <button type="submit" class="btn btn-primary">Update Payment</button>
+            </form>
+        </div>
+    </div>
+
+</body>
 </html>

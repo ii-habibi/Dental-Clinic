@@ -120,4 +120,8 @@ router.use('/expenses', expensesRoutes);
 
 const dashboardRouter = require('./audit-logs');
 router.use('/audit',dashboardRouter)
+
+const financeRoute = require('./finance')
+router.use('/finance', financeRoute)
+
 module.exports = router;

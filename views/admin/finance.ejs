@@ -1,0 +1,144 @@
+<!-- views/admin/finance.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance - Dental Clinic Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/finance.css">
+    <script src="/js/chart.js"></script>
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/finance.js" defer></script> 
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>Finance Management</h1>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
+                    <span class="user-name"><%= name %></span>
+                </div>
+            </div>
+            <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-tooth"></i>
+                <h2>DentalCare</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/dashboard/services"><i class="fas fa-concierge-bell"></i> Services</a>
+                <a href="/dashboard/blogs"><i class="fas fa-blog"></i> Blogs</a>
+                <a href="/dashboard/doctors"><i class="fas fa-user-md"></i> Doctors</a>
+                <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
+                <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
+                <a href="/dashboard/expenses"><i class="fas fa-dollar-sign"></i> Expenses</a>
+                <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
+                <a href="/dashboard/finance" class="active"><i class="fas fa-chart-line"></i> Finance</a> <!-- Corrected Link -->
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <!-- Financial Summary Section -->
+            <div class="dashboard-card">
+                <div class="financial-summary">
+                    <h2>Financial Summary</h2>
+                    <div class="filters">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate">
+                        
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate">
+                        
+                        <button id="fetchFinancialSummary" class="btn btn-primary">Get Summary</button>
+                        <button id="resetFilters" class="btn btn-secondary">Reset</button>
+                    </div>
+                    <div class="summary-results">
+                        <p>Total Income: PKR <span id="totalIncome">0.00</span></p>
+                        <p>Total Expenses: PKR <span id="totalExpenses">0.00</span></p>
+                        <p>Net Income: PKR <span id="netIncome">0.00</span></p>
+                    </div>
+                    <div class="charts">
+                        <canvas id="financialChart" width="400" height="200"></canvas>
+                        <canvas id="expensePieChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="manual-adjustments">
+                        <h3>Manual Adjustments</h3>
+                        <button id="openManualAdjustmentModal" class="btn btn-primary">Add Adjustment</button>
+                        <table id="manualAdjustmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Description</th>
+                                    <th>Amount (PKR)</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- AJAX-loaded data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Manual Adjustment Modal -->
+    <div id="manualAdjustmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" aria-label="Close Modal">&times;</span>
+            <h2>Add Manual Adjustment</h2>
+            <form id="manualAdjustmentForm" class="adjustment-form">
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <input type="text" name="description" id="description" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount (PKR):</label>
+                    <input type="number" step="0.01" name="amount" id="amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="adjustmentDate">Date:</label>
+                    <input type="date" name="date" id="adjustmentDate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Adjustment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Manual Adjustment Modal -->
+    <div id="editManualAdjustmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" aria-label="Close Modal">&times;</span>
+            <h2>Edit Manual Adjustment</h2>
+            <form id="editManualAdjustmentForm" class="adjustment-form">
+                <input type="hidden" name="id" id="editAdjustmentId">
+                <div class="form-group">
+                    <label for="editDescription">Description:</label>
+                    <input type="text" name="description" id="editDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAmount">Amount (PKR):</label>
+                    <input type="number" step="0.01" name="amount" id="editAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAdjustmentDate">Date:</label>
+                    <input type="date" name="date" id="editAdjustmentDate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Adjustment</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

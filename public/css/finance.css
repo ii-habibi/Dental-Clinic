@@ -1,0 +1,124 @@
+/* public/css/finance.css */
+
+/* Financial Summary Section */
+.financial-summary {
+    padding: 20px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.financial-summary .filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.financial-summary .filters label {
+    margin-right: 5px;
+}
+
+.financial-summary .filters input[type="date"] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.financial-summary .filters .btn {
+    margin-top: 10px;
+}
+
+.financial-summary .summary-results p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.financial-summary .charts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.financial-summary canvas {
+    flex: 1 1 300px;
+    max-width: 600px;
+}
+
+/* Manual Adjustments Section */
+.manual-adjustments {
+    margin-top: 40px;
+}
+
+.manual-adjustments h3 {
+    margin-bottom: 20px;
+}
+
+.manual-adjustments table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.manual-adjustments th, .manual-adjustments td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.manual-adjustments th {
+    background-color: #007bff;
+    color: white;
+}
+
+.manual-adjustments tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.manual-adjustments tr:hover {
+    background-color: #ddd;
+}
+
+/* Adjustment Form Styling */
+.adjustment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.adjustment-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.adjustment-form .form-group label {
+    margin-bottom: 5px;
+}
+
+.adjustment-form .form-group input[type="text"],
+.adjustment-form .form-group input[type="number"],
+.adjustment-form .form-group input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .financial-summary .filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .financial-summary .charts {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .financial-summary canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+}

@@ -1,4 +1,3 @@
-// helpers/auditLogger.js
 const pool = require('../models/db');
 
 /**
@@ -23,7 +22,11 @@ async function logAppointmentChange(adminId, appointmentId, actionType, oldValue
 
 /**
  * Log expense changes.
+ * @param {number} adminId
  * @param {number} expenseId
+ * @param {string} actionType
+ * @param {object|null} oldValue
+ * @param {object|null} newValue
  */
 async function logExpenseChange(adminId, expenseId, actionType, oldValue, newValue) {
     try {
@@ -37,5 +40,24 @@ async function logExpenseChange(adminId, expenseId, actionType, oldValue, newVal
     }
 }
 
+/**
+ * Log income changes.
+ * @param {number} adminId
+ * @param {number} incomeId
+ * @param {string} actionType
+ * @param {object|null} oldValue
+ * @param {object|null} newValue
+ */
+async function logIncomeChange(adminId, incomeId, actionType, oldValue, newValue) {
+    try {
+        await pool.query(
+            `INSERT INTO audit_logs (admin_id, income_id, action_type, old_value, new_value)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [adminId, incomeId, actionType, oldValue ? JSON.stringify(oldValue) : null, newValue ? JSON.stringify(newValue) : null]
+        );
+    } catch (error) {
+        console.error('Error logging income change:', error);
+    }
+}
 
-module.exports = { logAppointmentChange, logExpenseChange };
+module.exports = { logAppointmentChange, logExpenseChange, logIncomeChange };

@@ -4,7 +4,7 @@ const pool = require('../models/db');
 const { ensureSuperAdmin, isAuthenticated } = require('../middleware/auth');
 
 // Protect all admin routes
-// router.use(isAuthenticated);
+router.use(isAuthenticated);
 
 // Route to Dashboard
 router.get('/', (req, res) => {

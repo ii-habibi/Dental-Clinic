@@ -6,14 +6,14 @@
     <title>DentalCare Admin - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/login.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/login.js"></script>
+    <script src="/js/login.js" defer></script>
 </head>
 <body class="login-page">
     <div class="login-container">
         <div class="login-header">
-            <i class="fas fa-tooth"></i>
+            <i class="fas fa-tooth" aria-hidden="true"></i>
             <h1>DentalCare Admin</h1>
         </div>
         <div class="login-form-container">
@@ -21,15 +21,29 @@
             <form id="loginForm" class="admin-form">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                        <button type="button" id="togglePassword" class="toggle-password" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="remember-me">
+                        <input type="checkbox" id="remember-me" name="remember-me">
+                        Remember me
+                    </label>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
-            <div id="message" class="message"></div>
+            <div id="message" class="message" role="alert" aria-live="assertive"></div>
+            <div class="forgot-password">
+                <a href="/forgot-password">Forgot password?</a>
+            </div>
         </div>
     </div>
 </body>

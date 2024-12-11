@@ -22,6 +22,7 @@ router.get('/', async (req, res) => {
                         'appointment_id', a.appointment_id,
                         'treatment_type', a.treatment_type,
                         'notes', a.notes,
+                        'payment', a.amount,
                         'status', a.status,
                         'appointment_date', a.appointment_date,
                         'appointment_time', a.appointment_time,

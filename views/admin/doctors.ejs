@@ -6,8 +6,9 @@
     <title>DentalCare Admin - Doctors</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/doctor.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/doctor.js" defer></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -15,8 +16,8 @@
             <div class="header-content">
                 <h1>Doctor Management</h1>
                 <div class="user-info">
-                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
-                    <span class="user-name">User</span>
+                    <img src=""  class="user-avatar">
+                    <span class="user-name">Admin User</span>
                 </div>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -35,7 +36,7 @@
                 <a href="/dashboard/doctor" class="active"><i class="fas fa-user-md"></i> Doctors</a>
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
-                <a href="/dashboard/expenses" class=""><i class="fas fa-money-check-dollar"></i>Expenses</a>
+                <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
                 <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
@@ -57,9 +58,7 @@
                                 <p><strong>Expertise:</strong> <%= doctor.expertise %></p>
                                 <div class="doctor-actions">
                                     <a href="/dashboard/doctor/edit/<%= doctor.id %>" class="btn btn-edit">Edit</a>
-                                    <form action="/dashboard/doctor/delete/<%= doctor.id %>" method="POST">
-                                        <button type="submit" class="btn btn-delete">Delete</button>
-                                    </form>
+                                    <button class="btn btn-delete" data-doctor-id="<%= doctor.id %>">Delete</button>
                                 </div>
                             </div>
                         <% }) %>
@@ -67,7 +66,7 @@
 
                 <% } else if (action === 'edit') { %>
                     <h2>Edit Doctor Profile</h2>
-                    <form action="/dashboard/doctor/edit/<%= doctor.id %>" method="POST" enctype="multipart/form-data" class="admin-form">
+                    <form id="editDoctorForm" action="/dashboard/doctor/edit/<%= doctor.id %>" method="POST" enctype="multipart/form-data" class="admin-form">
                         <div class="form-group">
                             <label for="name">Name:</label>
                             <input type="text" id="name" name="name" value="<%= doctor.name %>" required>
@@ -93,7 +92,7 @@
 
                 <% } else if (action === 'add') { %>
                     <h2>Add Doctor Profile</h2>
-                    <form action="/dashboard/doctor/add" method="POST" enctype="multipart/form-data" class="admin-form">
+                    <form id="addDoctorForm" action="/dashboard/doctor/add" method="POST" enctype="multipart/form-data" class="admin-form">
                         <div class="form-group">
                             <label for="name">Doctor Name:</label>
                             <input type="text" id="name" name="name" required>

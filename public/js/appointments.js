@@ -7,6 +7,18 @@ $(document).ready(function() {
     const openModalBtn = $("#openAppointmentForm");
     const closeModalBtn = $(".close");
 
+    // Sidebar toggle functionality
+    $('#sidebar-toggle').click(function() {
+        $('.sidebar').toggleClass('active');
+    });
+
+    // Close sidebar when clicking outside of it
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.sidebar, #sidebar-toggle').length) {
+            $('.sidebar').removeClass('active');
+        }
+    });
+
     openModalBtn.click(() => modal.css("display", "block"));
 
     closeModalBtn.click(function() {
@@ -18,7 +30,7 @@ $(document).ready(function() {
     });
 
     $(window).click((event) => {
-        if (event.target === modal[0] || event.target === editModal[0] || event.target === paymentModal[0] || event.target === editPaymentModal[0]) {
+        if (event.target === modal[0] || event.target === editModal[0]|| event.target === paymentModal[0] || event.target === editPaymentModal[0]) {
             modal.css("display", "none");
             editModal.css("display", "none");
             paymentModal.css("display", "none");
@@ -428,4 +440,11 @@ $(document).ready(function() {
         formData.forEach(item => (data[item.name] = item.value));
         return data;
     }
+
+    // Responsive behavior for sidebar
+    $(window).resize(function() {
+        if ($(window).width() > 768) {
+            $('.sidebar').removeClass('active');
+        }
+    });
 });

@@ -115,4 +115,44 @@ $(document).ready(function () {
             $('.sidebar').removeClass('active');
         }
     });
+
+    // Add Patient form submission
+    $('form[action="/dashboard/patients/"]').on('submit', function(event) {
+        event.preventDefault();
+        const formData = $(this).serialize();
+
+        $.ajax({
+            url: '/dashboard/patients/',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                alert('Patient added successfully');
+                location.reload(); // Reload to show the new patient
+            },
+            error: function(xhr, status, error) {
+                console.error("Error adding patient:", error);
+                alert('Error adding patient');
+            }
+        });
+    });
+
+    // Search form submission
+    $('.search-form').on('submit', function(event) {
+        event.preventDefault();
+        const query = $('input[name="query"]').val();
+
+        $.ajax({
+            url: '/dashboard/patients/search',
+            type: 'GET',
+            data: { query: query },
+            success: function(response) {
+                // Assuming the response is HTML content
+                $('.table-responsive').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error searching patients:", error);
+                alert('Error searching patients');
+            }
+        });
+    });
 });

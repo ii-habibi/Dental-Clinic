@@ -1,5 +1,5 @@
 $(document).ready(function() {
-       // Sidebar toggle functionality
+    // Sidebar toggle functionality
     $('#sidebar-toggle').click(function() {
         $('.sidebar').toggleClass('active');
     });
@@ -24,13 +24,37 @@ $(document).ready(function() {
                     row.fadeOut(300, function() {
                         $(this).remove();
                     });
-                    alert('Service deleted successfully!');
+                    showNotification('Service deleted successfully!', 'success');
                 },
                 error: function(xhr) {
-                    alert('An error occurred while deleting the service. Please try again.');
+                    showNotification('An error occurred while deleting the service. Please try again.', 'error');
                 }
             });
         }
+    });
+
+    // Add service functionality
+    $('#addServiceForm').on('submit', function(event) {
+        event.preventDefault();
+
+        const serviceData = {
+            name: $('#name').val(),
+            description: $('#description').val(),
+            price: $('#price').val()
+        };
+
+        $.ajax({
+            url: '/dashboard/services',
+            type: 'POST',
+            data: serviceData,
+            success: function(response) {
+                showNotification('Service added successfully', 'success');
+                window.location.href = '/dashboard/services';
+            },
+            error: function(xhr) {
+                showNotification('Error adding service: ' + xhr.responseText, 'error');
+            }
+        });
     });
 
     // Edit service functionality
@@ -45,7 +69,7 @@ $(document).ready(function() {
         };
 
         if (!serviceId) {
-            alert("Service ID not found");
+            showNotification("Service ID not found", 'error');
             return;
         }
 
@@ -54,11 +78,11 @@ $(document).ready(function() {
             type: 'POST',
             data: serviceData,
             success: function(response) {
-                alert('Service updated successfully');
+                showNotification('Service updated successfully', 'success');
                 window.location.href = '/dashboard/services';
             },
             error: function(xhr) {
-                alert('Error updating service: ' + xhr.responseText);
+                showNotification('Error updating service: ' + xhr.responseText, 'error');
             }
         });
     });
@@ -69,4 +93,13 @@ $(document).ready(function() {
             $('.sidebar').removeClass('active');
         }
     });
+
+    // Function to show notifications
+    function showNotification(message, type) {
+        const notificationElement = $('<div>').addClass('notification').addClass(type).text(message);
+        $('body').append(notificationElement);
+        notificationElement.fadeIn().delay(3000).fadeOut(function() {
+            $(this).remove();
+        });
+    }
 });

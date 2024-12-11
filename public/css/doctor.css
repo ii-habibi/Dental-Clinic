@@ -120,119 +120,48 @@ body {
     color: #2c3e50;
 }
 
-/* Appointment List Styles */
-.appointment-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.appointment-list {
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-.appointment-item {
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.appointment-item:hover {
-    background-color: #e9ecef;
-}
-
-.appointment-item.active {
-    background-color: #e9ecef;
-    border-left: 4px solid #3498db;
-}
-
-.appointment-summary h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.1rem;
-}
-
-.appointment-summary p {
-    margin: 0 0 5px 0;
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-
-.appointment-date {
-    font-size: 0.8rem;
-    color: #6c757d;
-}
-
-.appointment-status {
-    float: right;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.status-pending {
-    background-color: #ffeeba;
-    color: #856404;
-}
-
-.status-approved {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-rejected {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.status-completed {
-    background-color: #cce5ff;
-    color: #004085;
-}
-
-/* Appointment Details Styles */
-.appointment-info {
-    display: flex;
-    flex-wrap: wrap;
+/* Doctor Grid Styles */
+.doctor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-}
-
-.patient-info,
-.appointment-details {
-    flex: 1;
-    min-width: 250px;
-}
-
-.info-group {
-    margin-bottom: 10px;
-}
-
-.info-group label {
-    font-weight: 600;
-    margin-right: 5px;
-}
-
-.treatment-notes {
     margin-top: 20px;
 }
 
-.appointment-actions {
-    margin-top: 20px;
+.doctor-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
 }
 
-.appointment-actions .btn {
-    margin-right: 10px;
-    margin-bottom: 10px;
+.doctor-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.doctor-card h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.doctor-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.doctor-actions {
+    margin-top: 15px;
 }
 
 /* Form Styles */
-.search-form {
-    margin-bottom: 20px;
+.admin-form {
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .form-group {
@@ -278,89 +207,22 @@ body {
     background-color: #2980b9;
 }
 
-.btn-approve {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-approve:hover {
-    background-color: #218838;
-}
-
-.btn-reject {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn-reject:hover {
-    background-color: #c82333;
-}
-
 .btn-edit {
-    background-color: #ffc107;
-    color: #212529;
+    background-color: #f39c12;
+    color: white;
 }
 
 .btn-edit:hover {
-    background-color: #e0a800;
+    background-color: #d35400;
 }
 
 .btn-delete {
-    background-color: #dc3545;
+    background-color: #e74c3c;
     color: white;
 }
 
 .btn-delete:hover {
-    background-color: #c82333;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1050;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.appointment-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.form-column {
-    flex: 1;
-    min-width: 250px;
+    background-color: #c0392b;
 }
 
 /* Responsive Styles */
@@ -377,12 +239,8 @@ body {
         padding-left: 20px;
     }
 
-    .appointment-form {
-        flex-direction: column;
-    }
-
-    .form-column {
-        width: 100%;
+    .doctor-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
 }
 
@@ -400,4 +258,65 @@ body {
     .sidebar-toggle {
         display: block;
     }
+}
+
+/* File input styling */
+input[type="file"] {
+    border: 1px solid #ced4da;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+/* Add some spacing for the add/edit doctor forms */
+#addDoctorForm,
+#editDoctorForm {
+    margin-top: 20px;
+}
+
+/* Style for success messages */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Style for error messages */
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Improve spacing between doctor cards */
+.doctor-card {
+    margin-bottom: 20px;
+}
+
+/* Add a hover effect to doctor cards */
+.doctor-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Style for the doctor's expertise */
+.doctor-card .expertise {
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Improve button spacing in doctor actions */
+.doctor-actions .btn {
+    margin-right: 5px;
+}
+
+/* Add a subtle background pattern to the main content area */
+.main-content {
+    background-image: linear-gradient(to right, #f1f3f5 1px, transparent 1px),
+                      linear-gradient(to bottom, #f1f3f5 1px, transparent 1px);
+    background-size: 20px 20px;
 }

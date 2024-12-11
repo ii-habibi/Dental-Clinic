@@ -120,123 +120,41 @@ body {
     color: #2c3e50;
 }
 
-/* Appointment List Styles */
-.appointment-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
 }
 
-.appointment-list {
-    max-height: 600px;
-    overflow-y: auto;
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-.appointment-item {
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-table th {
     background-color: #f8f9fa;
-    border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.appointment-item:hover {
-    background-color: #e9ecef;
-}
-
-.appointment-item.active {
-    background-color: #e9ecef;
-    border-left: 4px solid #3498db;
-}
-
-.appointment-summary h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.1rem;
-}
-
-.appointment-summary p {
-    margin: 0 0 5px 0;
-    font-size: 0.9rem;
-    color: #6c757d;
-}
-
-.appointment-date {
-    font-size: 0.8rem;
-    color: #6c757d;
-}
-
-.appointment-status {
-    float: right;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.status-pending {
-    background-color: #ffeeba;
-    color: #856404;
-}
-
-.status-approved {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-rejected {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.status-completed {
-    background-color: #cce5ff;
-    color: #004085;
-}
-
-/* Appointment Details Styles */
-.appointment-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.patient-info,
-.appointment-details {
-    flex: 1;
-    min-width: 250px;
-}
-
-.info-group {
-    margin-bottom: 10px;
-}
-
-.info-group label {
     font-weight: 600;
-    margin-right: 5px;
 }
 
-.treatment-notes {
-    margin-top: 20px;
-}
-
-.appointment-actions {
-    margin-top: 20px;
-}
-
-.appointment-actions .btn {
-    margin-right: 10px;
-    margin-bottom: 10px;
+.admin-table tr:hover {
+    background-color: #f5f5f5;
 }
 
 /* Form Styles */
-.search-form {
-    margin-bottom: 20px;
+.admin-form {
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
@@ -246,7 +164,6 @@ body {
 }
 
 .form-group input,
-.form-group select,
 .form-group textarea {
     width: 100%;
     padding: 8px;
@@ -256,16 +173,19 @@ body {
 }
 
 .form-group textarea {
+    height: 100px;
     resize: vertical;
 }
 
 /* Button Styles */
 .btn {
+    display: inline-block;
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 500;
+    text-decoration: none;
     transition: background-color 0.2s;
 }
 
@@ -278,89 +198,31 @@ body {
     background-color: #2980b9;
 }
 
-.btn-approve {
-    background-color: #28a745;
+.btn-secondary {
+    background-color: #95a5a6;
     color: white;
 }
 
-.btn-approve:hover {
-    background-color: #218838;
-}
-
-.btn-reject {
-    background-color: #dc3545;
-    color: white;
-}
-
-.btn-reject:hover {
-    background-color: #c82333;
+.btn-secondary:hover {
+    background-color: #7f8c8d;
 }
 
 .btn-edit {
-    background-color: #ffc107;
-    color: #212529;
+    background-color: #f39c12;
+    color: white;
 }
 
 .btn-edit:hover {
-    background-color: #e0a800;
+    background-color: #d35400;
 }
 
 .btn-delete {
-    background-color: #dc3545;
+    background-color: #e74c3c;
     color: white;
 }
 
 .btn-delete:hover {
-    background-color: #c82333;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1050;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.appointment-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.form-column {
-    flex: 1;
-    min-width: 250px;
+    background-color: #c0392b;
 }
 
 /* Responsive Styles */
@@ -377,12 +239,13 @@ body {
         padding-left: 20px;
     }
 
-    .appointment-form {
-        flex-direction: column;
+    .admin-table {
+        font-size: 14px;
     }
 
-    .form-column {
-        width: 100%;
+    .btn {
+        padding: 6px 12px;
+        font-size: 14px;
     }
 }
 
@@ -400,4 +263,95 @@ body {
     .sidebar-toggle {
         display: block;
     }
+}
+
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    z-index: 1001;
+    display: none;
+}
+
+.notification.success {
+    background-color: #2ecc71;
+}
+
+.notification.error {
+    background-color: #e74c3c;
+}
+
+/* Add some spacing for the add/edit service forms */
+#addServiceForm,
+#editServiceForm {
+    margin-top: 20px;
+}
+
+/* Style for success messages */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Style for error messages */
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Improve spacing between table rows */
+.admin-table tr {
+    transition: background-color 0.2s;
+}
+
+/* Add a subtle background pattern to the main content area */
+.main-content {
+    background-image: linear-gradient(to right, #f1f3f5 1px, transparent 1px),
+                      linear-gradient(to bottom, #f1f3f5 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Style for the service price input */
+#price,
+#servicePrice {
+    width: 150px;
+}
+
+/* Add a max-width to the description column to prevent layout issues */
+.admin-table td:nth-child(2) {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Add a tooltip to show full description on hover */
+.admin-table td:nth-child(2):hover {
+    position: relative;
+}
+
+.admin-table td:nth-child(2):hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    z-index: 1;
+    white-space: normal;
+    max-width: 300px;
+    word-wrap: break-word;
 }

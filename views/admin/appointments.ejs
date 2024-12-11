@@ -4,65 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointments - Dental Clinic Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/appointment.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/appointments.js"></script>
+    <script src="/js/appointments.js" defer></script>
 </head>
 <body>
-    <header class="admin-header">
-        <div class="container">
-            <h1 class="admin-title">Dental Care</h1>
-            <nav class="admin-nav">
-                <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/dashboard/services" class="nav-link">Services</a>
-                <a href="/dashboard/blogs" class="nav-link">Blog</a>
-                <a href="/dashboard/doctor" class="nav-link">Doctors</a>
-                <a href="/dashboard/appointments" class="nav-link">Manage Appointments</a>
-                <a href="/dashboard/patients" class="nav-link">Patients</a>
-                <a href="/dashboard/expenses" class="nav-link">Expenses</a>
-                <a href="/dashboard/finance" class="nav-link">Finance</a>
-                <a href="/dashboard/admin" class="nav-link">Admin</a>
-
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>Appointments</h1>
+                <div class="user-info">
+                    <img src="" alt="User Avatar" class="user-avatar" />
+                    <span class="user-name">Admin User</span>
+                </div>
+            </div>
+            <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-tooth"></i>
+                <h2>DentalCare</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/dashboard/services"><i class="fas fa-concierge-bell"></i> Services</a>
+                <a href="/dashboard/blogs"><i class="fas fa-blog"></i> Blogs</a>
+                <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
+                <a href="/dashboard/appointments" class="active"><i class="fas fa-calendar-check"></i> Appointments</a>
+                <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
+                <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
+                <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
+                <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
-        </div>
-    </header>
-
-    <main class="dashboard-layout">
-        <aside class="appointment-list">
-            <div class="appointment-list-header">
-                <h2>Appointments</h2>
-                <button id="openAppointmentForm" class="btn btn-primary">New Appointment</button>
-            </div>
-
-            <!-- AJAX Search Form -->
-            <form id="searchForm" style="margin:10px 0;">
-                <div class="form-group">
-                <input type="text" id="searchInput" placeholder="Search by doctor/patient name/email/phone">
-            </div>
-            </form>
-
-            <div class="appointment-items" id="appointmentItems">
-                <% appointments.forEach(appointment => { %>
-                    <div class="appointment-item" data-id="<%= appointment.appointment_id %>">
-                        <div class="appointment-summary">
-                            <h3><%= appointment.name %></h3>
-                            <p><%= appointment.treatment_type %></p>
-                            <span class="appointment-date">
-                                <%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
-                            </span>
-                            <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
-                                <%= appointment.status %>
-                            </span>
-                        </div>
-                    </div>
-                <% }) %>
+            <div class="sidebar-footer">
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </aside>
+        <main class="main-content">
+            <div class="dashboard-card">
+                <div class="appointment-list-header">
+                    <h2>Appointments</h2>
+                    <button id="openAppointmentForm" class="btn btn-primary">New Appointment</button>
+                </div>
 
-        <section class="appointment-details">
-            <div id="appointmentDetailsContent"></div>
-        </section>
-    </main>
+                <form id="searchForm" class="search-form">
+                    <div class="form-group">
+                        <input type="text" id="searchInput" placeholder="Search by doctor/patient name/email/phone" />
+                    </div>
+                </form>
+
+                <div class="appointment-list" id="appointmentItems">
+                    <% appointments.forEach(appointment => { %>
+                        <div class="appointment-item" data-id="<%= appointment.appointment_id %>">
+                            <div class="appointment-summary">
+                                <h3><%= appointment.name %></h3>
+                                <p><%= appointment.treatment_type %></p>
+                                <span class="appointment-date">
+                                    <%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                </span>
+                                <span class="appointment-status status-<%= appointment.status.toLowerCase() %>">
+                                    <%= appointment.status %>
+                                </span>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div id="appointmentDetailsContent"></div>
+            </div>
+        </main>
+    </div>
 
     <!-- Appointment Booking Modal -->
     <div id="appointmentFormModal" class="modal">
@@ -100,7 +117,7 @@
                     <div class="form-group">
                         <label for="doctor">Select Doctor:</label>
                         <select name="doctor_id" id="doctor" required>
-                            <% doctors.forEach(doctor=> { %>
+                            <% doctors.forEach(doctor => { %>
                                 <option value="<%= doctor.id %>"><%= doctor.name %></option>
                             <% }) %>
                         </select>
@@ -170,7 +187,7 @@
                     <div class="form-group">
                         <label for="edit-doctor">Select Doctor:</label>
                         <select name="doctor_id" id="edit-doctor">
-                            <% doctors.forEach(doctor=> { %>
+                            <% doctors.forEach(doctor => { %>
                                 <option value="<%= doctor.id %>"><%= doctor.name %></option>
                             <% }) %>
                         </select>
@@ -269,6 +286,5 @@
             </form>
         </div>
     </div>
-
 </body>
 </html>

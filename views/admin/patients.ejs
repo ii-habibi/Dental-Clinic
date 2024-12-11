@@ -6,9 +6,9 @@
     <title>DentalCare Admin - Patients</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/patients.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/patients.js"></script>
+    <script src="/js/patients.js" defer></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -16,8 +16,8 @@
             <div class="header-content">
                 <h1>Patient Management</h1>
                 <div class="user-info">
-                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
-                    <span class="user-name">User</span>
+                    <img src="" alt="User Avatar" class="user-avatar">
+                    <span class="user-name">Admin User</span>
                 </div>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -36,7 +36,7 @@
                 <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients" class="active"><i class="fas fa-users"></i> Patients</a>
-                <a href="/dashboard/expenses" class=""><i class="fas fa-money-check-dollar"></i>Expenses</a>
+                <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
                 <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
@@ -125,6 +125,7 @@
                                                         <p><strong>Doctor:</strong> <%= appointment.doctor_name %></p>
                                                         <p><strong>Treatment Type:</strong> <%= appointment.treatment_type %></p>
                                                         <p><strong>Notes:</strong> <%= appointment.notes %></p>
+                                                        <p><strong>Payment: Pkr </strong> <%= appointment.payment %></p>
                                                         <p><strong>Status:</strong> <%= appointment.status %></p>
                                                     </div>
                                                 <% }) %>

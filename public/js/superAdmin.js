@@ -1,4 +1,3 @@
-// public/js/superAdmin.js
 $(document).ready(function() {
     let doctorMap = {};
     let patientMap = {};
@@ -6,16 +5,14 @@ $(document).ready(function() {
     // Fetch all doctors once at page load
     function fetchAllDoctorsForMap() {
         $.ajax({
-            url: '/dashboard/audit/doctors', 
+            url: '/dashboard/audit/doctors',
             type: 'GET',
             success: function(data) {
-                doctorMap = {};
-                data.forEach(doc => {
-                    doctorMap[doc.id] = doc.name;
-                });
+                doctorMap = Object.fromEntries(data.map(doc => [doc.id, doc.name]));
             },
-            error: function() {
-                console.error('Failed to fetch doctors for name map.');
+            error: function(xhr, status, error) {
+                console.error('Failed to fetch doctors for name map:', error);
+                showNotification('Failed to fetch doctors. Please try again.', 'error');
             }
         });
     }
@@ -23,16 +20,14 @@ $(document).ready(function() {
     // Fetch all patients
     function fetchAllPatientsForMap() {
         $.ajax({
-            url: '/dashboard/audit/patients', 
+            url: '/dashboard/audit/patients',
             type: 'GET',
             success: function(data) {
-                patientMap = {};
-                data.forEach(patient => {
-                    patientMap[patient.patient_id] = patient.name;
-                });
+                patientMap = Object.fromEntries(data.map(patient => [patient.patient_id, patient.name]));
             },
-            error: function() {
-                console.error('Failed to fetch patients for name map.');
+            error: function(xhr, status, error) {
+                console.error('Failed to fetch patients for name map:', error);
+                showNotification('Failed to fetch patients. Please try again.', 'error');
             }
         });
     }
@@ -40,11 +35,12 @@ $(document).ready(function() {
     fetchAllDoctorsForMap();
     fetchAllPatientsForMap();
 
-    // Sidebar toggle
+    // Sidebar toggle functionality
     $('#sidebar-toggle').click(function() {
         $('.sidebar').toggleClass('active');
     });
 
+    // Close sidebar when clicking outside of it
     $(document).click(function(event) {
         if (!$(event.target).closest('.sidebar, #sidebar-toggle').length) {
             $('.sidebar').removeClass('active');
@@ -57,18 +53,20 @@ $(document).ready(function() {
             url: '/admins',
             type: 'GET',
             success: function(data) {
-                $('#adminsList').empty();
+                const $adminsList = $('#adminsList');
+                $adminsList.empty();
                 data.forEach(admin => {
-                    $('#adminsList').append(`
+                    $adminsList.append(`
                         <li>
-                            ${admin.name} (${admin.username}) - Super Admin: ${admin.is_super_admin ? 'Yes' : 'No'}
+                            ${escapeHtml(admin.name)} (${escapeHtml(admin.username)}) - Super Admin: ${admin.is_super_admin ? 'Yes' : 'No'}
                             <button class="deleteAdminBtn btn btn-danger" data-id="${admin.id}" data-is-super-admin="${admin.is_super_admin}">Delete</button>
                         </li>
                     `);
                 });
             },
-            error: function() {
-                alert('Failed to fetch admins.');
+            error: function(xhr, status, error) {
+                console.error('Failed to fetch admins:', error);
+                showNotification('Failed to fetch admins. Please try again.', 'error');
             }
         });
     }
@@ -77,10 +75,15 @@ $(document).ready(function() {
     // Add new admin
     $('#addAdminForm').on('submit', function(e) {
         e.preventDefault();
-        const name = $('#newAdminName').val();
-        const username = $('#newAdminUsername').val();
+        const name = $('#newAdminName').val().trim();
+        const username = $('#newAdminUsername').val().trim();
         const password = $('#newAdminPassword').val();
         const isSuperAdmin = $('#isSuperAdmin').val() === 'true';
+
+        if (!name || !username || !password) {
+            showNotification('Please fill in all fields.', 'error');
+            return;
+        }
 
         $.ajax({
             url: '/add-admin',
@@ -88,15 +91,13 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ name, username, password, isSuperAdmin }),
             success: function(message) {
-                alert(message);
-                $('#newAdminName').val('');
-                $('#newAdminUsername').val('');
-                $('#newAdminPassword').val('');
-                $('#isSuperAdmin').val('false');
+                showNotification(message, 'success');
+                $('#addAdminForm')[0].reset();
                 fetchAdmins();
             },
-            error: function() {
-                alert('Failed to add admin.');
+            error: function(xhr, status, error) {
+                console.error('Failed to add admin:', error);
+                showNotification('Failed to add admin. Please try again.', 'error');
             }
         });
     });
@@ -108,31 +109,39 @@ $(document).ready(function() {
 
         let password = null;
         if (isSuperAdmin) {
-            password = prompt("Enter password to delete a Super Admin:");
+            password = prompt("Enter your password to delete a Super Admin:");
             if (!password) return;
         }
 
-        $.ajax({
-            url: '/delete-admin',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ adminId, password }),
-            success: function(message) {
-                alert(message);
-                fetchAdmins();
-            },
-            error: function() {
-                alert('Failed to delete admin.');
-            }
-        });
+        if (confirm('Are you sure you want to delete this admin?')) {
+            $.ajax({
+                url: '/delete-admin',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ adminId, password }),
+                success: function(message) {
+                    showNotification(message, 'success');
+                    fetchAdmins();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to delete admin:', error);
+                    showNotification('Failed to delete admin. Please try again.', 'error');
+                }
+            });
+        }
     });
 
     // Update super admin credentials
     $('#updateSuperAdminForm').on('submit', function(e) {
         e.preventDefault();
         const currentPassword = $('#currentPassword').val();
-        const username = $('#updateUsername').val();
+        const username = $('#updateUsername').val().trim();
         const newPassword = $('#updatePassword').val();
+
+        if (!currentPassword || !username || !newPassword) {
+            showNotification('Please fill in all fields.', 'error');
+            return;
+        }
 
         $.ajax({
             url: '/update-super-admin',
@@ -140,13 +149,12 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ currentPassword, username, newPassword }),
             success: function(message) {
-                alert(message);
-                $('#currentPassword').val('');
-                $('#updateUsername').val('');
-                $('#updatePassword').val('');
+                showNotification(message, 'success');
+                $('#updateSuperAdminForm')[0].reset();
             },
-            error: function() {
-                alert('Failed to update credentials.');
+            error: function(xhr, status, error) {
+                console.error('Failed to update credentials:', error);
+                showNotification('Failed to update credentials. Please try again.', 'error');
             }
         });
     });
@@ -175,33 +183,21 @@ $(document).ready(function() {
 
     // Function to convert field names to human-readable labels
     function humanizeFieldName(field) {
-        if (FIELD_LABELS[field]) return FIELD_LABELS[field];
-        return field.split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+        return FIELD_LABELS[field] || field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
 
     // Function to format field values
     function formatValue(field, value) {
         if (!value) return value;
 
-        // Convert doctor_id to doctor name
         if (field === 'doctor_id') {
-            const docId = parseInt(value, 10);
-            if (!isNaN(docId) && doctorMap[docId]) {
-                return doctorMap[docId];
-            }
+            return doctorMap[value] || value;
         }
 
-        // Convert patient_id to patient name
         if (field === 'patient_id') {
-            const patId = parseInt(value, 10);
-            if (!isNaN(patId) && patientMap[patId]) {
-                return patientMap[patId];
-            }
+            return patientMap[value] || value;
         }
 
-        // Format dates
         if (field.endsWith('_date') || field.endsWith('_time')) {
             const dateObj = new Date(value);
             if (!isNaN(dateObj.getTime())) {
@@ -221,23 +217,16 @@ $(document).ready(function() {
 
     // Function to format changes between old and new values
     function formatChanges(oldValue, newValue, actionType) {
-        // Remove JSON.parse since oldValue and newValue are already objects
         const oldObj = oldValue || {};
         const newObj = newValue || {};
 
-        if (actionType === 'CREATE_EXPENSE' && newObj) {
+        if (actionType === 'CREATE_EXPENSE' || actionType === 'CREATE_APPOINTMENT') {
             return Object.entries(newObj)
                 .map(([k, v]) => `${humanizeFieldName(k)}: ${formatValue(k, v)}`)
                 .join('<br>');
         }
 
-        if (actionType === 'CREATE_APPOINTMENT' && newObj) {
-            return Object.entries(newObj)
-                .map(([k, v]) => `${humanizeFieldName(k)}: ${formatValue(k, v)}`)
-                .join('<br>');
-        }
-
-        if (actionType === 'DELETE_APPOINTMENT' && oldObj) {
+        if (actionType === 'DELETE_APPOINTMENT') {
             return Object.entries(oldObj)
                 .map(([k, v]) => `${humanizeFieldName(k)}: ${formatValue(k, v)}`)
                 .join('<br>');
@@ -255,22 +244,15 @@ $(document).ready(function() {
             }
         }
 
-        if (changes.length === 0) {
-            return 'No changes';
-        }
-
-        return changes.join('<br>');
+        return changes.length === 0 ? 'No changes' : changes.join('<br>');
     }
 
     // Function to generate a human-readable label for the record
     function getAppointmentOrExpenseLabel(log) {
-        // If expense_id exists
         if (log.expense_id) {
             return `Expense ID: ${log.expense_id}`;
         }
-        // If appointment_id exists
         if (log.appointment_id) {
-            // Prefer newValue for the latest data, fallback to oldValue.
             const record = log.new_value || log.old_value;
             if (record) {
                 const patientName = record.patient_id && patientMap[record.patient_id] ? patientMap[record.patient_id] : 'Unknown Patient';
@@ -286,7 +268,7 @@ $(document).ready(function() {
     // Fetch and display audit logs
     $('#viewLogsBtn').on('click', function() {
         $.ajax({
-            url: '/dashboard/audit', // Updated AJAX URL
+            url: '/dashboard/audit',
             type: 'GET',
             success: function(data) {
                 const logs = data.logs;
@@ -304,10 +286,10 @@ $(document).ready(function() {
                         $tbody.append(`
                             <tr>
                                 <td>${log.id}</td>
-                                <td>${log.admin_name}</td>
-                                <td>${log.admin_username}</td>
-                                <td>${recordLabel}</td>
-                                <td>${log.action_type}</td>
+                                <td>${escapeHtml(log.admin_name)}</td>
+                                <td>${escapeHtml(log.admin_username)}</td>
+                                <td>${escapeHtml(recordLabel)}</td>
+                                <td>${escapeHtml(log.action_type)}</td>
                                 <td>${changes}</td>
                                 <td>${new Date(log.created_at).toLocaleString()}</td>
                             </tr>
@@ -317,9 +299,29 @@ $(document).ready(function() {
 
                 $table.show();
             },
-            error: function() {
-                alert('Failed to fetch audit logs.');
+            error: function(xhr, status, error) {
+                console.error('Failed to fetch audit logs:', error);
+                showNotification('Failed to fetch audit logs. Please try again.', 'error');
             }
         });
     });
+
+    // Function to show notifications
+    function showNotification(message, type) {
+        const notificationElement = $('<div>').addClass('notification').addClass(type).text(message);
+        $('body').append(notificationElement);
+        notificationElement.fadeIn().delay(3000).fadeOut(function() {
+            $(this).remove();
+        });
+    }
+
+    // Function to escape HTML
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 });

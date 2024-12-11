@@ -6,21 +6,20 @@
     <title>DentalCare Admin - Super Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/super-admin.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/superAdmin.js"></script>
+    <script src="/js/superadmin.js" defer></script>
 </head>
 <body>
     <div class="dashboard-container">
         <header class="main-header">
             <div class="header-content">
-                <h1>Super Admin</h1>
+                <h1>Super Admin Dashboard</h1>
                 <div class="user-info">
-                    <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
-                    <span class="user-name">Name</span>
+                    <span class="user-name"><%= name %></span>
                 </div>
             </div>
-            <button id="sidebar-toggle" class="sidebar-toggle active">
+            <button id="sidebar-toggle" class="sidebar-toggle">
                 <i class="fas fa-bars"></i>
             </button>
         </header>
@@ -31,14 +30,14 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
-                <a href="/dashboard/services" class="active"><i class="fas fa-concierge-bell"></i> Services</a>
+                <a href="/dashboard/services"><i class="fas fa-concierge-bell"></i> Services</a>
                 <a href="/dashboard/blogs"><i class="fas fa-blog"></i> Blogs</a>
                 <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
-                <a href="/dashboard/expenses" class=""><i class="fas fa-money-check-dollar"></i>Expenses</a>
+                <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
                 <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
-                <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
+                <a href="/dashboard/admin" class="active"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
             <div class="sidebar-footer">
                 <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -102,28 +101,33 @@
                     </form>
                 </div>
 
-                <!-- Audit Logs Section -->
                 <div class="admin-section">
                     <h3>Audit Logs</h3>
                     <button id="viewLogsBtn" class="btn btn-primary">View Audit Logs</button>
-                    <table id="auditLogsTable" style="display: none; width:100%; border-collapse: collapse; margin-top:20px;">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Admin Name</th>
-                                <th>Admin Username</th>
-                                <th>Record</th>
-                                <th>Action Type</th>
-                                <th>Changes</th>
-                                <th>Timestamp</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="auditLogsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Admin Name</th>
+                                    <th>Admin Username</th>
+                                    <th>Record</th>
+                                    <th>Action Type</th>
+                                    <th>Changes</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-
             </div>
         </main>
     </div>
+    <footer>
+        <div class="footer">
+            <p class="footer-text">&copy; 2024 DentalCare. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

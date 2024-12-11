@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DentalCare Admin - Blogs</title>
+    <title>DentalCare Admin - Blog Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/blogs.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/blogs.js"></script>
+    <script src="/js/blogs.js" defer></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -16,8 +16,7 @@
             <div class="header-content">
                 <h1>Blog Management</h1>
                 <div class="user-info">
-                    <img src="" alt="User Avatar" class="user-avatar">
-                    <span class="user-name">User</span>
+                    <span class="user-name">Admin</span>
                 </div>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -36,7 +35,7 @@
                 <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
-                <a href="/dashboard/expenses" class=""><i class="fas fa-money-check-dollar"></i>Expenses</a>
+                <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
                 <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
@@ -48,7 +47,7 @@
             <div class="dashboard-card">
                 <% if (action === 'add') { %>
                     <h2>Add New Blog</h2>
-                    <form action="/dashboard/blogs" method="POST" class="admin-form">
+                    <form id="addBlogForm" class="admin-form">
                         <div class="form-group">
                             <label for="title">Title</label>
                             <input type="text" name="title" id="title" required>
@@ -61,7 +60,7 @@
 
                         <div class="form-group">
                             <label for="author">Author</label>
-                            <input type="text" name="author" id="author">
+                            <input type="text" name="author" id="author"  required>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -69,7 +68,8 @@
 
                 <% } else if (action === 'edit') { %>
                     <h2>Edit Blog</h2>
-                    <form action="/dashboard/blogs/edit/<%= blog.blog_id %>" method="POST" class="admin-form">
+                    <form id="editBlogForm" class="admin-form">
+                        <input type="hidden" name="blogId" value="<%= blog.blog_id %>">
                         <div class="form-group">
                             <label for="title">Title</label>
                             <input type="text" name="title" id="title" value="<%= blog.title %>" required>
@@ -82,13 +82,14 @@
                 
                         <div class="form-group">
                             <label for="author">Author</label>
-                            <input type="text" name="author" id="author" value="<%= blog.author %>">
+                            <input type="text" name="author" id="author" value="<%= blog.author %>" required>
                         </div>
                 
+
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
 
-                <% } else if (action === 'manage') { %>
+                <% } else { %>
                     <h2>Manage Blogs</h2>
                     <a href="/dashboard/blogs/add" class="btn btn-primary">Add New Blog</a>
                     <div class="table-responsive">
@@ -101,12 +102,14 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="blogsList">
                                 <% blogs.forEach(blog => { %>
                                     <tr id="blog-<%= blog.blog_id %>">
                                         <td><%= blog.title %></td>
                                         <td><%= blog.author %></td>
-                                        <td><%= blog.published_date %></td>
+                                        <td><%= new Date(blog.created_at).toLocaleDateString('en-US', {
+                                            month: 'short', day: 'numeric', year: 'numeric'
+                                        }) %></td>
                                         <td>
                                             <a href="/dashboard/blogs/edit/<%= blog.blog_id %>" class="btn btn-edit">Edit</a>
                                             <button class="btn btn-delete delete-button" data-id="<%= blog.blog_id %>">Delete</button>
@@ -121,5 +124,6 @@
             </div>
         </main>
     </div>
+    <div id="notification" class="notification"></div>
 </body>
 </html>

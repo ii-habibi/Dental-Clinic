@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DentalCare Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin_routes.css">
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/adminDashboard.js"></script>
     <script src="/js/chart.js"></script>
+    <script src="/js/admin-dashboard.js" defer></script>
 </head>
-
 <body>
     <div class="dashboard-container">
         <header class="main-header">
             <div class="header-content">
-                <h1>Welcome, Dr. <%= name %>
-                </h1>
+                <h1>Welcome, Dr. <%= name %></h1>
                 <div class="user-info">
-                    <img src="" alt="User Avatar" class="user-avatar">
-                    <span class="user-name">
-                        <%= name %>
-                    </span>
+                    <img class="user-avatar">
+                    <span class="user-name"><%= name %></span>
                 </div>
             </div>
             <button id="sidebar-toggle" class="sidebar-toggle">
@@ -42,7 +37,7 @@
                 <a href="/dashboard/doctor"><i class="fas fa-user-md"></i> Doctors</a>
                 <a href="/dashboard/appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="/dashboard/patients"><i class="fas fa-users"></i> Patients</a>
-                <a href="/dashboard/expenses" class=""><i class="fas fa-money-check-dollar"></i>Expenses</a>
+                <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
                 <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
             </nav>
@@ -86,6 +81,7 @@
                                     <th>Patient Name</th>
                                     <th>Treatment Type</th>
                                     <th>Appointment Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -105,6 +101,7 @@
                                     <th>Treatment Type</th>
                                     <th>Doctor</th>
                                     <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -120,12 +117,10 @@
             </div>
         </main>
     </div>
-
     <footer>
         <div class="footer">
-            <p class="footer-text">@copyrights 2024</p>
+            <p class="footer-text">&copy; 2024 DentalCare. All rights reserved.</p>
         </div>
     </footer>
 </body>
-
 </html>

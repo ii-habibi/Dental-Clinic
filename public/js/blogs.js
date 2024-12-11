@@ -11,6 +11,53 @@ $(document).ready(function() {
         }
     });
 
+    // Add blog functionality
+    $('#addBlogForm').submit(function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: '/dashboard/blogs/add',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                showNotification('Blog added successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/dashboard/blogs';
+                }, 2000);
+            },
+            error: function(xhr) {
+                showNotification('An error occurred while adding the blog. Please try again.', 'error');
+            }
+        });
+    });
+
+    // Edit blog functionality
+    $('#editBlogForm').submit(function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const blogId = formData.get('blogId');
+
+        $.ajax({
+            url: '/dashboard/blogs/edit/' + blogId,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                showNotification('Blog updated successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '/dashboard/blogs';
+                }, 2000);
+            },
+            error: function(xhr) {
+                showNotification('An error occurred while updating the blog. Please try again.', 'error');
+            }
+        });
+    });
+
     // Delete blog functionality
     $('.delete-button').click(function() {
         const blogId = $(this).data('id');
@@ -24,10 +71,10 @@ $(document).ready(function() {
                     row.fadeOut(300, function() {
                         $(this).remove();
                     });
-                    alert('Blog deleted successfully!');
+                    showNotification('Blog deleted successfully!', 'success');
                 },
                 error: function(xhr) {
-                    alert('An error occurred while deleting the blog. Please try again.');
+                    showNotification('An error occurred while deleting the blog. Please try again.', 'error');
                 }
             });
         }
@@ -39,4 +86,15 @@ $(document).ready(function() {
             $('.sidebar').removeClass('active');
         }
     });
+
+    // Function to show notifications
+    function showNotification(message, type) {
+        const notification = $('#notification');
+        notification.text(message).addClass(type).fadeIn();
+        setTimeout(() => {
+            notification.fadeOut(() => {
+                notification.removeClass(type);
+            });
+        }, 3000);
+    }
 });

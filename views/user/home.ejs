@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/home_styles.css">
-    <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/user.js"></script>
     <title>Home - Services</title>
+    <link rel="stylesheet" href="/css/home_styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/user.js" defer></script>
 </head>
 <body>
 
@@ -26,7 +29,7 @@
                     <a href="tel:+1234567890" class="btn btn-call">
                         <i class="fas fa-phone"></i> Call
                     </a>
-                    <a href="#appointment-section"  class="btn btn-book">Book Appointment</a>
+                    <a href="#appointment-section" class="btn btn-book">Book Appointment</a>
                 </div>
                 <div class="hamburger">
                     <span class="bar"></span>
@@ -108,7 +111,6 @@
         
         
         
-        
         <!-- Appointment section  -->
         
         <section class="appointment-section" id="appointment-section">
@@ -117,53 +119,68 @@
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input type="text" name="patient_name" id="name" required>
+                    <span class="error-message" id="error-name"></span>
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender:</label>
-                    <select name="patient_gender" id="gender"  required>
-                        <option>--</option>
+                    <select name="patient_gender" id="gender" required>
+                        <option value="">-- Select Gender --</option>
                         <option value="M">Male</option>
                         <option value="F">Female</option>
                     </select>
+                    <span class="error-message" id="error-gender"></span>
                 </div>
                 <div class="form-group">
                     <label for="age">Age:</label>
-                    <input type="number" name="patient_age" id="age" required>
+                    <input type="number" name="patient_age" id="age" max="120" min="0" placeholder="Optional">
+                    <span class="error-message" id="error-age"></span>
                 </div>
                 <div class="form-group">
                     <label for="email">Email:</label>
                     <input type="email" name="patient_email" id="email" required>
+                    <span class="error-message" id="error-email"></span>
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone Number:</label>
-                    <input type="tel" name="patient_phone" id="phone" required>
+                    <input type="tel" name="patient_phone" id="phone" pattern="\d{11}" title="Please enter an 11-digit phone number" required>
+                    <small>Enter exactly 11 digits.</small>
+                    <span class="error-message" id="error-phone"></span>
                 </div>
                 <div class="form-group">
                     <label for="doctor">Select Doctor:</label>
                     <select name="doctor_id" id="doctor" required>
+                        <option value="">-- Select Doctor --</option>
                         <% doctors.forEach(doctor => { %>
                             <option value="<%= doctor.id %>"><%= doctor.name %></option>
                         <% }) %>
                     </select>
+                    <span class="error-message" id="error-doctor"></span>
                 </div>
                 <div class="form-group">
                     <label for="date">Date:</label>
                     <input type="date" name="appointment_date" id="date" required>
+                    <small>Sundays are not available.</small>
+                    <span class="error-message" id="error-date"></span>
                 </div>
                 <div class="form-group">
                     <label for="time">Time:</label>
-                    <input type="time" name="appointment_time" id="time">
+                    <input type="time" name="appointment_time" id="time" required min="08:00" max="18:00">
+                    <small>Available from 08:00 to 18:00.</small>
+                    <span class="error-message" id="error-time"></span>
                 </div>
                 <div class="form-group">
                     <label for="treatment">Treatment Type:</label>
                     <input type="text" name="treatment_type" id="treatment" required>
+                    <span class="error-message" id="error-treatment"></span>
                 </div>
                 <div class="form-group">
                     <label for="visitType">Visit Type:</label>
                     <select name="visit_type" id="visitType" required>
+                        <option value="">-- Select Visit Type --</option>
                         <option value="first">First Visit</option>
                         <option value="return">Return Patient</option>
                     </select>
+                    <span class="error-message" id="error-visitType"></span>
                 </div>
                 <button type="submit" class="btn-submit">Book Appointment</button>
             </form>

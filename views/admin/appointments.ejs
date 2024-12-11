@@ -38,6 +38,7 @@
                 <a href="/dashboard/expenses"><i class="fas fa-money-check-dollar"></i> Expenses</a>
                 <a href="/dashboard/finance"><i class="fas fa-chart-line"></i> Finance</a>
                 <a href="/dashboard/admin"><i class="fas fa-user-shield"></i> Admin</a>
+                <a href="/logout"><i class="fas fa-arrow-right-from-bracket"></i>Log out</a>
             </nav>
             <div class="sidebar-footer">
                 <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -101,7 +102,7 @@
                     </div>
                     <div class="form-group">
                         <label for="age">Age:</label>
-                        <input type="number" name="patient_age" id="age">
+                        <input type="number" name="patient_age" id="age" max="120" min="0" placeholder="Optional">
                     </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
@@ -109,13 +110,15 @@
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone Number:</label>
-                        <input type="tel" name="patient_phone" id="phone">
+                        <input type="tel" name="patient_phone" id="phone" pattern="\d{11}" title="Please enter an 11-digit phone number" required>
+                        <small>Enter exactly 11 digits.</small>
                     </div>
                 </div>
                 <div class="form-column">
                     <div class="form-group">
                         <label for="doctor">Select Doctor:</label>
                         <select name="doctor_id" id="doctor" required>
+                            <option value="">-- Select Doctor --</option>
                             <% doctors.forEach(doctor => { %>
                                 <option value="<%= doctor.id %>"><%= doctor.name %></option>
                             <% }) %>
@@ -123,11 +126,13 @@
                     </div>
                     <div class="form-group">
                         <label for="date">Date:</label>
-                        <input type="date" name="appointment_date" id="date">
+                        <input type="date" name="appointment_date" id="date" required>
+                        <small>Sundays are not available.</small>
                     </div>
                     <div class="form-group">
                         <label for="time">Time:</label>
-                        <input type="time" name="appointment_time" id="time">
+                        <input type="time" name="appointment_time" id="time" required min="08:00" max="18:00">
+                        <small>Available from 08:00 to 18:00.</small>
                     </div>
                     <div class="form-group">
                         <label for="treatment">Treatment Type:</label>
@@ -171,7 +176,7 @@
                     </div>
                     <div class="form-group">
                         <label for="edit-age">Age:</label>
-                        <input type="number" name="patient_age" id="edit-age">
+                        <input type="number" name="patient_age" id="edit-age" max="120" min="0" placeholder="Optional">
                     </div>
                     <div class="form-group">
                         <label for="edit-email">Email:</label>
@@ -179,13 +184,15 @@
                     </div>
                     <div class="form-group">
                         <label for="edit-phone">Phone Number:</label>
-                        <input type="tel" name="patient_phone" id="edit-phone">
+                        <input type="tel" name="patient_phone" id="edit-phone" pattern="\d{11}" title="Please enter an 11-digit phone number" required>
+                        <small>Enter exactly 11 digits.</small>
                     </div>
                 </div>
                 <div class="form-column">
                     <div class="form-group">
                         <label for="edit-doctor">Select Doctor:</label>
-                        <select name="doctor_id" id="edit-doctor">
+                        <select name="doctor_id" id="edit-doctor" required>
+                            <option value="">-- Select Doctor --</option>
                             <% doctors.forEach(doctor => { %>
                                 <option value="<%= doctor.id %>"><%= doctor.name %></option>
                             <% }) %>
@@ -193,11 +200,13 @@
                     </div>
                     <div class="form-group">
                         <label for="edit-date">Date:</label>
-                        <input type="date" name="appointment_date" id="edit-date">
+                        <input type="date" name="appointment_date" id="edit-date" required>
+                        <small>Sundays are not available.</small>
                     </div>
                     <div class="form-group">
                         <label for="edit-time">Time:</label>
-                        <input type="time" name="appointment_time" id="edit-time">
+                        <input type="time" name="appointment_time" id="edit-time" required min="08:00" max="18:00">
+                        <small>Available from 08:00 to 18:00.</small>
                     </div>
                     <div class="form-group">
                         <label for="edit-treatment">Treatment Type:</label>
@@ -242,7 +251,7 @@
                 </div>
                 <div class="form-group">
                     <label for="payment_date">Payment Date:</label>
-                    <input type="date" name="payment_date" id="payment_date">
+                    <input type="date" name="payment_date" id="payment_date" required>
                 </div>
                 <div class="form-group">
                     <label for="payment_message">Payment Message (optional):</label>
@@ -274,7 +283,7 @@
                 </div>
                 <div class="form-group">
                     <label for="edit_payment_date">Payment Date:</label>
-                    <input type="date" name="payment_date" id="edit_payment_date">
+                    <input type="date" name="payment_date" id="edit_payment_date" required>
                 </div>
                 <div class="form-group">
                     <label for="edit_payment_message">Payment Message (optional):</label>

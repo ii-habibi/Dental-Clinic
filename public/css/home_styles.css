@@ -342,6 +342,39 @@ button:focus {
     border: 0;
 }
 
+
+/* Error message styling */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Highlight invalid input fields */
+.input-error {
+    border: 1px solid red;
+}
+
+/* Optional: Style for small helper texts */
+small {
+    display: block;
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 2px;
+}
+
+/* Additional styles to ensure error messages don't break layout */
+.form-group {
+    position: relative;
+}
+
+.form-group .error-message {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .navbar-container {
